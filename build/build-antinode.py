@@ -68,6 +68,7 @@ class Face:
     """One typeface, ready to hand back outlined words in output units."""
 
     def __init__(self, path, axes=None):
+        self.name = os.path.basename(path)
         font = TTFont(path)
         if axes:
             font = instancer.instantiateVariableFont(font, axes, inplace=False)
@@ -77,20 +78,63 @@ class Face:
         self.glyphs = font.getGlyphSet()
         self.hmtx = font["hmtx"]
 
-    def hairline(self):
-        """Thinnest stroke in the face: the top of the O, measured not guessed."""
+    def _o(self):
         pen = Flatten(self.glyphs)
         self.glyphs[self.cmap[ord("O")]].draw(pen)
         pen._endPath()
-        xs = [p[0] for c in pen.contours for p in c]
-        x = (min(xs) + max(xs)) / 2
+        return pen.contours
+
+    @staticmethod
+    def _cross(contours, at, vertical):
+        """Where a ray crosses the outline, sorted along it."""
         hits = []
-        for c in pen.contours:
-            for (x0, y0), (x1, y1) in zip(c, c[1:] + c[:1]):
-                if (x0 - x) * (x1 - x) < 0:
-                    hits.append(y0 + (x - x0) / (x1 - x0) * (y1 - y0))
-        hits.sort()
-        return hits[-1] - hits[-2]
+        for c in contours:
+            for a, b in zip(c, c[1:] + c[:1]):
+                u, v = (a[0], b[0]) if vertical else (a[1], b[1])
+                if (u - at) * (v - at) < 0:
+                    t = (at - u) / (v - u)
+                    hits.append((a[1] + t * (b[1] - a[1])) if vertical
+                                else (a[0] + t * (b[0] - a[0])))
+        return sorted(hits)
+
+    def _thickness(self, vertical):
+        """Stroke thickness across the O, on the axis asked for.
+
+        The ray is nudged off centre on purpose. Dead centre it meets the
+        outline at its extremum, where the curve is tangent to the ray and
+        polyline vertices sit exactly on it — some fonts then return three
+        crossings, some none. A few percent off, the cut is clean and the
+        stroke is the same to within a fraction of a percent.
+        """
+        cs = self._o()
+        vals = [p[0 if vertical else 1] for c in cs for p in c]
+        lo, hi = min(vals), max(vals)
+        for off in (0.045, 0.08, 0.12, -0.045, -0.08):
+            h = self._cross(cs, (lo + hi) / 2 + off * (hi - lo), vertical)
+            if len(h) == 4:
+                return h[3] - h[2] if vertical else h[1] - h[0]
+        raise ValueError(f"cannot measure the O in {self.name}")
+
+    def hairline(self):
+        """Thinnest stroke in the face, at the top of the O."""
+        return self._thickness(vertical=True)
+
+    def stem(self):
+        """Thickest stroke, at the side of the O. Equal to the hairline in a
+        monoline face, several times it in a high-contrast serif."""
+        return self._thickness(vertical=False)
+
+    def pen(self, cap_height):
+        """The weight to draw the wave at, in output units.
+
+        A high-contrast serif has no single stroke to match, so the pen sits a
+        fixed fraction of the way from its hairline toward its stem — the
+        value tuned on Cormorant. A monoline face collapses both to the same
+        number, and the rule hands back exactly the letter stroke, which is
+        the right answer: mark and type become literally one pen.
+        """
+        hair, stem = self.hairline(), self.stem()
+        return round((hair + 0.19 * (stem - hair)) / self.cap * cap_height, 2)
 
     def word(self, text, cap_height, tracking, transform=None):
         """Outlined caps sitting on y=0, growing up. Returns (path, advance)."""
@@ -160,7 +204,7 @@ LOBES = 3
 WAVE = LOBES * L
 CAPH = 52.0        # wordmark cap height, A-C
 TRACK = 0.30       # letterspacing in em, A-C
-SW = round(serif.hairline() / serif.cap * CAPH * 1.55, 2)
+SW = round(serif.hairline() / serif.cap * CAPH * 1.55, 2)   # the tall lockups, unchanged
 
 OVER = 46.0        # axis above the wave
 GAP = 96.0         # wave to wordmark
@@ -368,47 +412,65 @@ HCAP = 100.0                # cap height for the H cuts
 HTRACK = 0.22               # tighter than the tall lockups: the lobe has to read
                             # as one letter among eight, not as a mark beside a line
 HHAIR = serif.hairline() / serif.cap * HCAP
-HSW = round(HHAIR * 1.40, 2)          # the pen, just over the type's thinnest stroke
+HSW = serif.pen(HCAP)                 # measured off the face, see Face.pen
 HAMP = HCAP * 1.38                    # the lobe stands taller than the caps
 HLOBE = HCAP * 2.15                   # and wider than it is tall, as drawn
+
+# Sci-fi faces to try the same drawing in. All monoline, so Face.pen hands
+# back exactly their letter stroke and the wave becomes literally one pen
+# with the type — which a high-contrast serif can never quite be.
+SCIFI = {
+    "orbitron": ("Orbitron[wght].ttf", {"wght": 400}, 0.14),
+    "michroma": ("Michroma-Regular.ttf", None, 0.10),
+    "megrim": ("Megrim.ttf", None, 0.16),
+    "jura": ("Jura[wght].ttf", {"wght": 300}, 0.18),
+    "exo2": ("Exo2[wght].ttf", {"wght": 300}, 0.16),
+    "novasquare": ("NovaSquare.ttf", None, 0.12),
+}
 REST = WORD[1:]                       # NTINODE — the A is the wave
 
 
-def implied(carry=True, cross=True, mirror_only=False):
+def implied(face=None, cap=HCAP, track=HTRACK, carry=True, cross=True,
+            mirror_only=False, amp=1.38, lobe=2.15):
     """Axis, opening lobe as the A, then the rest of the name on the same line.
 
     carry       the wave keeps going behind the word, ghosted
     cross       the small x at the crest, marking the antinode itself
     mirror_only drop the carry but keep the opposite phase under the A
+
+    The lobe is 1.38 caps tall and 2.15 wide whatever the face, so it stays
+    oversized among the letters rather than becoming one of them.
     """
-    gap = HTRACK * serif.upem / serif.cap * HCAP * 0.75
-    word, wlen = serif.word(REST, HCAP, HTRACK, Transform().translate(HLOBE + gap, 0))
-    right = HLOBE + gap + wlen
-    over = HCAP * 0.34
-    lobes = max(1, round(right / HLOBE))
+    face = face or serif
+    sw = face.pen(cap)
+    amp, lobe = cap * amp, cap * lobe
+    gap = track * face.upem / face.cap * cap * 0.75
+    word, wlen = face.word(REST, cap, track, Transform().translate(lobe + gap, 0))
+    right = lobe + gap + wlen
+    over = cap * 0.34
     body = []
     if carry or mirror_only:
-        # The carry is the diagram, not the wordmark. Drawn at the same weight
-        # it competes with the caps and the whole thing turns to lattice, so it
-        # runs under the type's own hairline and recedes to a trace.
-        n = lobes if carry else 1
+        # The carry is the diagram, not the wordmark. At the same weight it
+        # competes with the caps and the whole thing turns to lattice, so it
+        # runs under the type's own stroke and recedes to a trace.
+        n = max(1, round(right / lobe)) if carry else 1
         body.append(stroked(
-            [sine(HAMP, HLOBE, n, mirror=True, horizontal=True),
-             sine(HAMP, HLOBE, n, horizontal=True)],
-            dash=f"{HSW * 2.6:.2f} {HSW * 2.4:.2f}", sw=round(HSW * 0.62, 2)))
+            [sine(amp, lobe, n, mirror=True, horizontal=True),
+             sine(amp, lobe, n, horizontal=True)],
+            dash=f"{sw * 2.6:.2f} {sw * 2.4:.2f}", sw=round(sw * 0.62, 2)))
     # the solid arc goes on top of its own ghost, so the A reads as drawn
-    body.append(stroked([sine(HAMP, HLOBE, 1, mirror=True, horizontal=True)], sw=HSW))
+    body.append(stroked([sine(amp, lobe, 1, mirror=True, horizontal=True)], sw=sw))
     body.append(f'<path d="M {-over:.1f} 0 L {right + over:.1f} 0" fill="none" '
-                f'stroke="{INK}" stroke-width="{HSW}"/>')
+                f'stroke="{INK}" stroke-width="{sw}"/>')
     if cross:
-        c, r = HLOBE / 2, HCAP * 0.095
-        body.append(f'<path d="M {c - r:.1f} {-HAMP - r:.1f} l {2 * r:.1f} {2 * r:.1f} '
-                    f'M {c + r:.1f} {-HAMP - r:.1f} l {-2 * r:.1f} {2 * r:.1f}" fill="none" '
-                    f'stroke="{INK}" stroke-width="{HSW}"/>')
+        c, r = lobe / 2, cap * 0.095
+        body.append(f'<path d="M {c - r:.1f} {-amp - r:.1f} l {2 * r:.1f} {2 * r:.1f} '
+                    f'M {c + r:.1f} {-amp - r:.1f} l {-2 * r:.1f} {2 * r:.1f}" fill="none" '
+                    f'stroke="{INK}" stroke-width="{sw}"/>')
     body.append(f'<path d="{word}"/>')
     pad = 44.0
-    low = HAMP if (carry or mirror_only) else 0.0
-    top = HAMP + (HCAP * 0.095 if cross else 0)
+    low = amp if (carry or mirror_only) else 0.0
+    top = amp + (cap * 0.095 if cross else 0)
     return svg(right + 2 * over + 2 * pad, top + low + 2 * pad, "\n".join(body),
                -over - pad, -top - pad)
 
@@ -473,6 +535,13 @@ files = {
     "antinode-H-bare.svg": implied(carry=False, cross=False),
     "antinode-H-nocross.svg": implied(cross=False),
 }
+TYPE = os.path.join(HERE, os.pardir, "type-study")
+specimens = {}
+for _name, (_file, _axes, _track) in SCIFI.items():
+    _f = Face(os.path.join(FONTS, _file), _axes)
+    specimens[f"{_name}-carried.svg"] = implied(_f, track=_track)
+    specimens[f"{_name}-quiet.svg"] = implied(_f, track=_track, carry=False, mirror_only=True)
+
 files["antinode-H-icon.svg"] = implied_icon()
 files["antinode-H-icon-plain.svg"] = implied_icon(cross=False)
 
@@ -509,6 +578,10 @@ if __name__ == "__main__":
     for name, data in files.items():
         open(os.path.join(OUT, name), "w").write(data)
     open(os.path.join(TMP, "_diagram.svg"), "w").write(diagram())
+    os.makedirs(TYPE, exist_ok=True)
+    for name, data in specimens.items():
+        open(os.path.join(TYPE, name), "w").write(data)
+    print(f"{len(specimens)} specimens -> {TYPE}")
     print(f"serif  cap {CAPH:.0f}  stroke {SW}  word {WORDLEN:.0f}")
     print(f"grot   cap {GCAP:.0f}  rule {RULE}  ghost {GHOST}  word {GWORD:.0f}")
     for tag, half in (("E", GCAP / 2), ("F", GCAP + SEAM / 2)):

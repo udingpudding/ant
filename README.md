@@ -38,6 +38,20 @@ Every direction ships a display cut and an **icon cut**. The icon is redrawn, no
 roughly 80px the display stroke goes sub-pixel and the mark greys out, so the icon takes a tighter
 crop, a heavier stroke, and no dashes.
 
+## Typeface study
+
+`type-study/` cuts the same H lockup in six monoline geometric faces, plus Cormorant for
+comparison — Jura, Exo 2, Megrim, Orbitron, Michroma, Nova Square. Two per face: `-carried`
+with the wave running behind the name, `-quiet` with just the opening lobe.
+
+Monoline matters here beyond the look. A high-contrast serif has no single stroke for the wave
+to match, so its pen is a compromise between hairline and stem. A monoline face has exactly one
+stroke, and `Face.pen()` hands the wave that number — the curve and the letters become literally
+the same pen. Every weight on this page is measured off its own font's `O`, never chosen.
+
+None of the six has the sketch's **arched N** (`∩`), which is the lobe's own form one size down.
+That would have to be drawn.
+
 ## Rebuilding
 
 Nothing is traced or hand-tuned. The lobes are a real sine, the letters are real font
@@ -46,7 +60,7 @@ outlines converted to paths, and stroke weights are measured off the typefaces.
 ```sh
 cd build
 python3 -m pip install fonttools brotli
-python3 build-antinode.py     # rewrites ../logos
+python3 build-antinode.py     # rewrites ../logos and ../type-study
 python3 assets.py             # subsets fonts, bundles the marks
 python3 page.py               # rewrites ../index.html
 ```
@@ -54,7 +68,7 @@ python3 page.py               # rewrites ../index.html
 Optional, and worth it — it takes about 15% off the paths:
 
 ```sh
-npx svgo -f logos --multipass   # from the repo root, between the first and second step
+npx svgo -f logos -f type-study --multipass   # from the repo root, between steps one and two
 ```
 
 ## Still to do

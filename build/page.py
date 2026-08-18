@@ -104,7 +104,31 @@ plates = [group("The sketch, read right",
                 "give a tall lockup."),
           plates[0], plates[1], plates[2]]
 
-subs = {"FONT_REGULAR": d["faces"]["regular"], "FONT_BOLD": d["faces"]["bold"],
+FACES = [
+    ("H-quiet", "Cormorant Garamond Light",
+     "The incumbent. High contrast, so the wave's pen can only ever split the difference between "
+     "its hairline and its stem."),
+    ("face-jura-quiet", "Jura Light",
+     "Open, faintly eccentric, and the closest of the six to the hand in the sketch."),
+    ("face-exo2-quiet", "Exo 2 Light",
+     "Geometric without costume. The only variable face here, so weight is a dial rather than a choice."),
+    ("face-megrim-quiet", "Megrim",
+     "Compass and ruler, nothing else. The most delicate thing on this page and the most fragile — "
+     "it will not survive a small size or a coarse print."),
+    ("face-orbitron-quiet", "Orbitron",
+     "The canonical space face. Square-shouldered and even; reads as engineering rather than luxury."),
+    ("face-michroma-quiet", "Michroma",
+     "Wide and deliberate. Takes the most line for eight letters, and has the most presence per letter."),
+    ("face-novasquare-quiet", "Nova Square",
+     "Flat-sided bowls, clipped terminals. The most overtly retro-future, and the furthest from the serif."),
+]
+
+faces_html = "\n".join(
+    f'<div class="face"><div class="meta"><span class="nm">{name}</span>'
+    f'<p class="why">{why}</p></div>{d["marks"][key]}</div>'
+    for key, name, why in FACES)
+
+subs = {"FACES": faces_html, "FONT_REGULAR": d["faces"]["regular"], "FONT_BOLD": d["faces"]["bold"],
         "FONT_BLACK": d["faces"]["black"], "FONT_BLACKIT": d["faces"]["blackit"],
         "SKETCH": d["sketch"], "PLATES": "\n".join(plates), **d["marks"]}
 

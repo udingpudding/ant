@@ -1,1 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="268" height="388" fill="#141312" viewBox="-134 -94 268 388"><path fill="none" stroke="#141312" stroke-width="2.89" d="M0-60v320M0 0c26.18 16.67 52.2 33.33 70.71 50S100 83.33 100 100s-10.78 33.33-29.29 50S26.18 183.33 0 200"/><path fill="none" stroke="#141312" stroke-dasharray="20.23 14.45" stroke-width="2.89" d="M0 0c-26.18 16.67-52.2 33.33-70.71 50S-100 83.33-100 100s10.78 33.33 29.29 50S-26.18 183.33 0 200"/><circle cx="100" cy="100" r="5.49"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-134.0 -94.0 268.0 388.0" width="268" height="388" fill="#141312">
+<g fill="none" stroke="#141312" stroke-width="3.35" stroke-linecap="butt" stroke-linejoin="miter">
+  <path d="M 0 -60.0 L 0 260.0"/>
+  <path d="M 0.00 0.00 C 26.18 16.67 52.20 33.33 70.71 50.00 C 89.22 66.67 100.00 83.33 100.00 100.00 C 100.00 116.67 89.22 133.33 70.71 150.00 C 52.20 166.67 26.18 183.33 -0.00 200.00"/>
+</g>
+<g fill="none" stroke="#141312" stroke-width="3.35" stroke-linecap="butt" stroke-linejoin="miter" stroke-dasharray="23.45 16.75">
+  <path d="M -0.00 0.00 C -26.18 16.67 -52.20 33.33 -70.71 50.00 C -89.22 66.67 -100.00 83.33 -100.00 100.00 C -100.00 116.67 -89.22 133.33 -70.71 150.00 C -52.20 166.67 -26.18 183.33 0.00 200.00"/>
+</g>
+<circle cx="100.0" cy="100.0" r="6.37"/>
+</svg>
