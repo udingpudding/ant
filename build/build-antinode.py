@@ -420,12 +420,22 @@ HLOBE = HCAP * 2.15                   # and wider than it is tall, as drawn
 # back exactly their letter stroke and the wave becomes literally one pen
 # with the type — which a high-contrast serif can never quite be.
 SCIFI = {
-    "orbitron": ("Orbitron[wght].ttf", {"wght": 400}, 0.14),
-    "michroma": ("Michroma-Regular.ttf", None, 0.10),
-    "megrim": ("Megrim.ttf", None, 0.16),
-    "jura": ("Jura[wght].ttf", {"wght": 300}, 0.18),
-    "exo2": ("Exo2[wght].ttf", {"wght": 300}, 0.16),
-    "novasquare": ("NovaSquare.ttf", None, 0.12),
+    # The register the reference films share — Dune, Passengers, Stowaway — is
+    # thin, wide and generously tracked: quiet and technical, not the heavy
+    # square sci-fi of a game title. So each face sits near the light end of
+    # its weight axis, and the wide ones are pushed out on width too. Michroma
+    # and Nova Square are gone: single-weight, no way to take them there.
+    #
+    #   name: (file, variable axes, tracking in em)
+    "anybody": ("Anybody[wdth,wght].ttf", {"wght": 200, "wdth": 150}, 0.26),
+    "saira": ("Saira[wdth,wght].ttf", {"wght": 200, "wdth": 125}, 0.28),
+    "encodesans": ("EncodeSans[wdth,wght].ttf", {"wght": 200, "wdth": 125}, 0.26),
+    "outfit": ("Outfit[wght].ttf", {"wght": 200}, 0.34),
+    "josefin": ("JosefinSans[wght].ttf", {"wght": 200}, 0.34),
+    "exo2": ("Exo2[wght].ttf", {"wght": 150}, 0.30),
+    "jura": ("Jura[wght].ttf", {"wght": 300}, 0.28),          # 300 is its floor
+    "megrim": ("Megrim.ttf", None, 0.24),                     # static, hairline already
+    "orbitron": ("Orbitron[wght].ttf", {"wght": 400}, 0.18),  # 400 is its floor
 }
 REST = WORD[1:]                       # NTINODE — the A is the wave
 

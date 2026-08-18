@@ -97,6 +97,7 @@
   .face { background: var(--card); border: 1px solid var(--rule); padding: clamp(1rem, 3vw, 1.8rem) clamp(1.1rem, 3vw, 2.2rem); }
   .face .meta { display: flex; align-items: baseline; gap: .8rem; flex-wrap: wrap; margin-bottom: .5rem; }
   .face .nm { font: 700 .9375rem/1.3 var(--ar); letter-spacing: -.01em; }
+  .face .nm span { font-weight: 400; color: var(--muted); font-size: .8125rem; letter-spacing: 0; }
   .face .why { font-size: .875rem; line-height: 1.55; color: var(--muted); flex: 1 1 22ch; margin: 0; }
   .face svg { display: block; width: 100%; max-width: 620px; height: auto; margin-top: .4rem; }
   .files { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.6rem 2rem; }
@@ -160,12 +161,16 @@
 
   <section class="col" style="gap:1.5rem">
     <p class="eyebrow">Typefaces</p>
-    <h2>The letters in the sketch are not a serif.<br><em>They are drawn with a compass.</em></h2>
-    <p class="note">Monoline geometric caps — space-age, and they do something Cormorant cannot.
+    <h2>Thin, wide, and spaced out.<br><em>Dune, not a game title.</em></h2>
+    <p class="note">The register those films share — <em>Dune</em>, <em>Passengers</em>,
+      <em>Stowaway</em> — is quiet and technical: hairline weights, wide forms, generous tracking.
+      Nothing shouts. So every face below sits near the light end of its weight axis, and the wide
+      ones are pushed out on width as well. Monoline geometric caps also do something Cormorant cannot.
       A high-contrast serif has no single stroke for the wave to match, so its pen is a compromise
       between hairline and stem. A monoline face has exactly one stroke, and the rule hands the wave
-      that number: the curve and the letters become literally the same pen. Same drawing below, seven
-      ways. Each is measured off its own <em>O</em>, so none of them is guessed.</p>
+      that number: the curve and the letters become literally the same pen — and as the type gets
+      lighter, the wave thins with it for free. Each weight below is measured off its own font's
+      <em>O</em>, never chosen.</p>
     <div class="faces">{{FACES}}</div>
     <p class="note">One thing none of them do: in your sketch the <strong>N is an arch</strong> —
       the same form as the lobe, just smaller. That makes the mark a system rather than a wave plus

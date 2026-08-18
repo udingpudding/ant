@@ -40,9 +40,15 @@ crop, a heavier stroke, and no dashes.
 
 ## Typeface study
 
-`type-study/` cuts the same H lockup in six monoline geometric faces, plus Cormorant for
-comparison — Jura, Exo 2, Megrim, Orbitron, Michroma, Nova Square. Two per face: `-carried`
-with the wave running behind the name, `-quiet` with just the opening lobe.
+`type-study/` cuts the same H lockup in nine faces, plus Cormorant for comparison. The register
+the reference films share — *Dune*, *Passengers*, *Stowaway* — is thin, wide and generously
+tracked: quiet and technical rather than the heavy square sci-fi of a game title. So each face
+sits near the light end of its weight axis, and the wide ones are pushed out on width as well.
+
+Anybody Expanded Thin, Saira Expanded Light, Encode Sans Expanded Thin, Outfit Thin, Josefin Sans
+Thin, Exo 2 Thin, Jura Light, Megrim, and Orbitron — the last kept only to mark the boundary,
+since its lightest weight is still the heaviest of the set. Two cuts per face: `-carried` with
+the wave running behind the name, `-quiet` with just the opening lobe.
 
 Monoline matters here beyond the look. A high-contrast serif has no single stroke for the wave
 to match, so its pen is a compromise between hairline and stem. A monoline face has exactly one

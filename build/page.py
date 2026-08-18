@@ -105,22 +105,30 @@ plates = [group("The sketch, read right",
           plates[0], plates[1], plates[2]]
 
 FACES = [
-    ("H-quiet", "Cormorant Garamond Light",
-     "The incumbent. High contrast, so the wave's pen can only ever split the difference between "
-     "its hairline and its stem."),
-    ("face-jura-quiet", "Jura Light",
-     "Open, faintly eccentric, and the closest of the six to the hand in the sketch."),
-    ("face-exo2-quiet", "Exo 2 Light",
-     "Geometric without costume. The only variable face here, so weight is a dial rather than a choice."),
-    ("face-megrim-quiet", "Megrim",
-     "Compass and ruler, nothing else. The most delicate thing on this page and the most fragile — "
-     "it will not survive a small size or a coarse print."),
-    ("face-orbitron-quiet", "Orbitron",
-     "The canonical space face. Square-shouldered and even; reads as engineering rather than luxury."),
-    ("face-michroma-quiet", "Michroma",
-     "Wide and deliberate. Takes the most line for eight letters, and has the most presence per letter."),
-    ("face-novasquare-quiet", "Nova Square",
-     "Flat-sided bowls, clipped terminals. The most overtly retro-future, and the furthest from the serif."),
+    ("face-anybody-quiet", "Anybody Expanded Thin <span>200 / 150</span>",
+     "The widest here and the closest to <em>Dune</em> — stretched almost past comfort, which is "
+     "exactly where those titles live."),
+    ("face-saira-quiet", "Saira Expanded Light <span>200 / 125</span>",
+     "The same move, less extreme. Neutral enough to carry a whole identity rather than one title card."),
+    ("face-encodesans-quiet", "Encode Sans Expanded Thin <span>200 / 125</span>",
+     "A shade more mechanical than Saira. The flattened O keeps it from turning decorative."),
+    ("face-outfit-quiet", "Outfit Thin <span>200</span>",
+     "Pure geometry — circular O, single-storey forms. <em>Passengers</em> rather than <em>Dune</em>: "
+     "not wide, just quiet."),
+    ("face-josefin-quiet", "Josefin Sans Thin <span>200</span>",
+     "Deco bones under the sci-fi. Small caps for its em, so it sets lighter than it measures."),
+    ("face-exo2-quiet", "Exo 2 Thin <span>150</span>",
+     "The most adjustable of the set — weight is a dial rather than a decision."),
+    ("face-jura-quiet", "Jura Light <span>300</span>",
+     "The floor of its axis, and still the closest of any of them to the hand in the sketch."),
+    ("face-megrim-quiet", "Megrim <span>static</span>",
+     "Compass and ruler, nothing else. The most delicate thing on the page and the most fragile — "
+     "its E is a constructed oddity you either love or redraw."),
+    ("face-orbitron-quiet", "Orbitron <span>400, its floor</span>",
+     "Kept only to mark the boundary: its lightest weight is still the heaviest thing here. Square "
+     "sci-fi cannot reach the register those films sit in."),
+    ("H-quiet", "Cormorant Garamond Light <span>the incumbent</span>",
+     "High contrast, so the wave's pen can only ever split the difference between hairline and stem."),
 ]
 
 faces_html = "\n".join(
