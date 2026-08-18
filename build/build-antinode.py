@@ -10,12 +10,11 @@ typeface rather than picked by eye. Re-running regenerates all of it.
     A  standing wave   three antinodes, both phases solid
     B  single antinode one lobe, one side
     C  phase           one instant solid, the other ghosted, crest marked
-    D  reflection      the word on the axis with its mirror under it
-    E  enclosed        the word inside one antinode
-    F  enclosed pair   the word and its mirror, both inside one antinode
+    H  implied A      the opening lobe stands in for the A, the name follows
 
-A-C set the word in Cormorant Garamond Light; D-F in Archivo, following the
-second sketch's heavier letterforms.
+All four set the word in Cormorant Garamond Light. An Archivo family (D-G)
+was cut and dropped — too heavy, and it read as type beside a wave rather
+than type made of one. It is in the first commit if it is ever wanted.
 """
 import math, os
 from fontTools.ttLib import TTFont
@@ -360,6 +359,79 @@ def on_the_line(face=None, cap=None, track=None, rule=None, trail=False):
                left - pad, -amp - pad)
 
 
+# ------------------------------------------- H: the A implied by the figure
+# The opening lobe is not next to the word, it *is* the A — it stands in the
+# A's slot and the rest of the name follows it. That is also why only the
+# first lobe is solid in the sketch: it is the one doing a letter's job, and
+# the wave carrying on behind the word is drawn as the diagram it is.
+HCAP = 100.0                # cap height for the H cuts
+HTRACK = 0.22               # tighter than the tall lockups: the lobe has to read
+                            # as one letter among eight, not as a mark beside a line
+HHAIR = serif.hairline() / serif.cap * HCAP
+HSW = round(HHAIR * 1.40, 2)          # the pen, just over the type's thinnest stroke
+HAMP = HCAP * 1.38                    # the lobe stands taller than the caps
+HLOBE = HCAP * 2.15                   # and wider than it is tall, as drawn
+REST = WORD[1:]                       # NTINODE — the A is the wave
+
+
+def implied(carry=True, cross=True, mirror_only=False):
+    """Axis, opening lobe as the A, then the rest of the name on the same line.
+
+    carry       the wave keeps going behind the word, ghosted
+    cross       the small x at the crest, marking the antinode itself
+    mirror_only drop the carry but keep the opposite phase under the A
+    """
+    gap = HTRACK * serif.upem / serif.cap * HCAP * 0.75
+    word, wlen = serif.word(REST, HCAP, HTRACK, Transform().translate(HLOBE + gap, 0))
+    right = HLOBE + gap + wlen
+    over = HCAP * 0.34
+    lobes = max(1, round(right / HLOBE))
+    body = []
+    if carry or mirror_only:
+        # The carry is the diagram, not the wordmark. Drawn at the same weight
+        # it competes with the caps and the whole thing turns to lattice, so it
+        # runs under the type's own hairline and recedes to a trace.
+        n = lobes if carry else 1
+        body.append(stroked(
+            [sine(HAMP, HLOBE, n, mirror=True, horizontal=True),
+             sine(HAMP, HLOBE, n, horizontal=True)],
+            dash=f"{HSW * 2.6:.2f} {HSW * 2.4:.2f}", sw=round(HSW * 0.62, 2)))
+    # the solid arc goes on top of its own ghost, so the A reads as drawn
+    body.append(stroked([sine(HAMP, HLOBE, 1, mirror=True, horizontal=True)], sw=HSW))
+    body.append(f'<path d="M {-over:.1f} 0 L {right + over:.1f} 0" fill="none" '
+                f'stroke="{INK}" stroke-width="{HSW}"/>')
+    if cross:
+        c, r = HLOBE / 2, HCAP * 0.095
+        body.append(f'<path d="M {c - r:.1f} {-HAMP - r:.1f} l {2 * r:.1f} {2 * r:.1f} '
+                    f'M {c + r:.1f} {-HAMP - r:.1f} l {-2 * r:.1f} {2 * r:.1f}" fill="none" '
+                    f'stroke="{INK}" stroke-width="{HSW}"/>')
+    body.append(f'<path d="{word}"/>')
+    pad = 44.0
+    low = HAMP if (carry or mirror_only) else 0.0
+    top = HAMP + (HCAP * 0.095 if cross else 0)
+    return svg(right + 2 * over + 2 * pad, top + low + 2 * pad, "\n".join(body),
+               -over - pad, -top - pad)
+
+
+def implied_icon(cross=True):
+    """The A alone. One antinode closed into a lens with the axis through it,
+    at the small cut's weight — the dashes and the hairline both give out
+    long before the shape does."""
+    over = HLOBE * 0.16
+    body = [stroked([closed_lens(HAMP, HLOBE, horizontal=True)], sw=ICON_SW),
+            f'<path d="M {-over:.1f} 0 L {HLOBE + over:.1f} 0" fill="none" '
+            f'stroke="{INK}" stroke-width="{ICON_SW}"/>']
+    if cross:
+        c, r = HLOBE / 2, HLOBE * 0.062
+        body.append(f'<path d="M {c - r:.1f} {-HAMP - r:.1f} l {2 * r:.1f} {2 * r:.1f} '
+                    f'M {c + r:.1f} {-HAMP - r:.1f} l {-2 * r:.1f} {2 * r:.1f}" fill="none" '
+                    f'stroke="{INK}" stroke-width="{ICON_SW}"/>')
+    pad = 12.0
+    top = HAMP + (HLOBE * 0.062 if cross else 0)
+    return svg(HLOBE + 2 * over + 2 * pad, top + HAMP + 2 * pad, "\n".join(body),
+               -over - pad, -top - pad)
+
+
 def tilde(cx, cy, width, amp):
     """One full period of the same sine, small enough to live inside a lobe —
     the squiggle from the sketch, drawn with the curve it stands for."""
@@ -395,29 +467,14 @@ files = {
     # stops reading as a marked point and only thickens the curve. So A and C
     # share an icon, and the dot stays a display-only detail.
     "antinode-C-icon.svg": icon(lens),
-    # D - the word and its reflection about the axis; no container
-    "antinode-D-lockup.svg": reflection(ghost=False),
-    "antinode-D-ghost.svg": reflection(ghost=True),
-    # G - the sketch upright: wave along a horizontal axis, word on the axis
-    "antinode-G-lockup.svg": on_the_line(),
-    "antinode-G-phase.svg": on_the_line(trail=True),
-    "antinode-G-serif.svg": on_the_line(face=serif, cap=CAPH * 1.7, track=TRACK, rule=SW * 1.7),
-    # E - the word inside one antinode
-    "antinode-E-lockup.svg": enclosed(mirrored=False),
-    # F - the word and its reflection, both inside one antinode
-    "antinode-F-lockup.svg": enclosed(mirrored=True),
+    # H - the A implied by the opening lobe; the reading the sketch actually shows
+    "antinode-H-lockup.svg": implied(),
+    "antinode-H-quiet.svg": implied(carry=False, mirror_only=True),
+    "antinode-H-bare.svg": implied(carry=False, cross=False),
+    "antinode-H-nocross.svg": implied(cross=False),
 }
-def def_icon():
-    """D, E and F share one mark: the sketch's oval with the squiggle in it.
-    No axis stem here — a stem through a tilde reads as a collision, and the
-    two node points where the curves meet already say where the axis is."""
-    pad = 10.0
-    body = stroked(lens, sw=ICON_SW) + "\n" + tilde(0, L / 2, A * 1.05, A * 0.155)
-    return svg(2 * A + 2 * pad, L + 2 * pad, body, -A - pad, -pad)
-
-
-for tag in "DEFG":
-    files[f"antinode-{tag}-icon.svg"] = def_icon()
+files["antinode-H-icon.svg"] = implied_icon()
+files["antinode-H-icon-plain.svg"] = implied_icon(cross=False)
 
 
 def diagram():

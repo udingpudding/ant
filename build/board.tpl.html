@@ -116,16 +116,16 @@
 
   <header class="hero">
     <p class="eyebrow">Antinode &middot; logo study &middot; 18 August 2026</p>
-    <h1>Six ways to draw<br><em>a standing wave.</em></h1>
-    <p class="lede">Two pencil sketches, rebuilt as vector. Real sine curves, real font outlines,
-      pen weights measured off the type rather than guessed.</p>
-    <div class="showpiece">{{F-lockup}}</div>
+    <h1>The A is not written.<br><em>It is the first lobe.</em></h1>
+    <p class="lede">The sketch rebuilt as vector. Real sine curves, real font outlines, pen
+      weights measured off the type rather than guessed.</p>
+    <div class="showpiece">{{H-lockup}}</div>
   </header>
 
   <section class="two">
     <div class="col" style="gap:1rem">
       <img src="data:image/jpeg;base64,{{SKETCH}}" alt="The first pencil sketch: three variants of a vertical line with wave lobes and the word ANTINODE running down it.">
-      <p class="note">Sketch one, the right way up. The photo first arrived rotated a quarter
+      <p class="note">The sketch, the right way up. The photo first arrived rotated a quarter
         turn, which is why A&ndash;C stand on a vertical axis — see the note opposite.</p>
     </div>
     <div class="col" style="gap:1.6rem">
@@ -134,18 +134,19 @@
         <li><b>01</b><span>The straight line is the <strong>axis</strong> — the string at rest. Everything hangs off it.</span></li>
         <li><b>02</b><span>The lobes alternate across it: not a squiggle but a <strong>standing wave</strong>, drawn at both extremes of its swing.</span></li>
         <li><b>03</b><span>The axis is also the <strong>baseline</strong>. The word stands on the same line the wave swings about — one line doing both jobs.</span></li>
-        <li><b>04</b><span>The lobe wraps the <strong>opening letter</strong>, and the word runs out of it. Both sketches do this; neither runs the wave the full length of the word.</span></li>
+        <li><b>04</b><span>The <strong>A is never drawn</strong>. The wave's opening crest stands in its place, and the name runs on from there — which is why that lobe is the only solid one and everything after it is dashed. It is the one doing a letter's job.</span></li>
       </ul>
       <h3 style="margin-top:.4rem">A correction worth stating plainly</h3>
       <p class="note">The first photo came in rotated a quarter turn, so I read the axis as vertical
         and built A&ndash;C as tall lockups with the name running down the line. Righted, the sketch
         is horizontal. <strong>G is what you actually drew.</strong> A&ndash;C are still finished work
         and still hold up — they are just a different logo from the one on the paper.</p>
-      <h3 style="margin-top:.4rem">One fork before any of it</h3>
-      <p class="note">A&ndash;C set the name in <strong>Cormorant Garamond Light</strong> — delicate,
-        editorial, the face your portfolio already runs on. D&ndash;G follow the sketch's heavier hand
-        and this page's own type into <strong>Archivo</strong>. G is cut both ways so you can see the
-        same drawing in both worlds. Which world Antinode lives in decides more than which shape you pick.</p>
+      <h3 style="margin-top:.4rem">A family that was cut and dropped</h3>
+      <p class="note">A set in <strong>Archivo</strong> — heavier, geometric, matching this page's own
+        type — got as far as four finished directions before it was scrapped. It was too thick for the
+        drawing, and it kept arriving at type sitting <em>beside</em> a wave rather than type made
+        <em>out of</em> one. Everything here is <strong>Cormorant Garamond Light</strong>, the face
+        your portfolio already runs on. The dropped set is in the first commit if it is ever wanted.</p>
     </div>
   </section>
 
@@ -158,9 +159,9 @@
       <dl class="spec">
         <dt>Curve</dt><dd>An actual sine, <code>x = A sin(2&pi;y / &lambda;)</code>, not arcs. In A&ndash;C the amplitude equals half the lobe, so each antinode is as wide as it is tall.</dd>
         <dt>Fit</dt><dd>Four cubic segments per lobe, each carrying the sine's own tangent. Worst deviation from the true curve is 0.09% of amplitude — a tenth of the stroke, so it cannot be seen.</dd>
-        <dt>Lens sizing</dt><dd>In E and F the lobe is sized <em>by</em> the word: pick what fraction of its length the word fills, and the amplitude falls out of the clearance needed where the curve is lowest, at the word's ends. Nothing is eyeballed.</dd>
-        <dt>Wordmarks</dt><dd>Converted to outlines. No font file is needed to render them, and nothing shifts on a machine without Cormorant or Archivo installed.</dd>
-        <dt>Stroke</dt><dd>Measured, not chosen. The serif cut runs 1.55&times; the thinnest stroke in Cormorant, found at the narrowest point of its <em>O</em>; the grotesque rule runs 0.45&times; Archivo's. Mark and type read as one instrument.</dd>
+        <dt>The A</dt><dd>The opening lobe stands 1.38 caps tall and 2.15 caps wide, so it reads oversized among the letters rather than as one of them. The axis crosses it where an A's bar would sit.</dd>
+        <dt>Wordmarks</dt><dd>Converted to outlines. No font file is needed to render them, and nothing shifts on a machine without Cormorant installed.</dd>
+        <dt>Stroke</dt><dd>Measured, not chosen — 1.4 to 1.55&times; the thinnest stroke in Cormorant, found at the narrowest point of its <em>O</em>. The carried wave runs at 0.62&times; that again, so it reads as a trace under the name instead of competing with it.</dd>
         <dt>Joins</dt><dd>Each lobe is one closed contour. Two strokes meeting at a node leave a notch once the pen gets heavy — butt caps cannot form a point.</dd>
       </dl>
     </div>
@@ -181,6 +182,16 @@
     <h2>Everything regenerates from one script.</h2>
     <div class="files">
       <div>
+        <h3>logos/ &mdash; H</h3>
+        <ul>
+          <li>antinode-H-lockup.svg</li>
+          <li>antinode-H-quiet.svg</li>
+          <li>antinode-H-bare.svg</li>
+          <li>antinode-H-nocross.svg</li>
+          <li>antinode-H-icon.svg</li>
+        </ul>
+      </div>
+      <div>
         <h3>logos/ &mdash; A to C</h3>
         <ul>
           <li>antinode-A-stacked.svg</li>
@@ -188,16 +199,6 @@
           <li>antinode-A-mark.svg</li>
           <li>antinode-A-icon.svg</li>
           <li><em>&hellip;same four for B and C</em></li>
-        </ul>
-      </div>
-      <div>
-        <h3>logos/ &mdash; D to F</h3>
-        <ul>
-          <li>antinode-D-lockup.svg</li>
-          <li>antinode-D-ghost.svg</li>
-          <li>antinode-E-lockup.svg</li>
-          <li>antinode-F-lockup.svg</li>
-          <li>antinode-D/E/F-icon.svg</li>
         </ul>
       </div>
       <div>
@@ -209,7 +210,7 @@
         </ul>
       </div>
     </div>
-    <p class="note">Those three wait on you picking a direction — no sense cutting an export set six
+    <p class="note">Those three wait on you picking a direction — no sense cutting an export set four
       times over. Vector masters are black on transparent; swapping <code>#141312</code> for anything
       else is one find-and-replace.</p>
     <pre>cd build

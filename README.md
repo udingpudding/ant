@@ -8,25 +8,35 @@ photo and every mark are inlined, so it works from `file://` with nothing served
 
 ## What is here
 
-`logos/` holds the vector masters, black on transparent. Seven directions:
+`logos/` holds the vector masters, black on transparent, all set in Cormorant Garamond Light.
 
-| | | |
-|---|---|---|
-| **G** | On the line | the sketch read the right way up — horizontal axis, word standing on it, one antinode around the opening letter. Cut in Archivo, in Archivo with the opposite phase dashed, and in Cormorant. |
-| **D** | Reflection | the word on the axis with its own reflection beneath. Solid, and with the reflection reduced to an outline. |
-| **E** | Enclosed | the word inside one antinode. |
-| **F** | Enclosed pair | the word and its reflection, both inside one antinode. |
-| **A** | Standing wave | three antinodes, both phases solid. Vertical. |
-| **B** | Single antinode | one lobe, one side. Vertical. |
-| **C** | Phase | one instant solid, the other ghosted, the crest marked. Vertical. |
+**H — the implied A.** The sketch, read whole. The axis runs horizontally and the name stands
+on it, and the wave's opening crest is not *beside* the A — it **is** the A, sitting in its slot
+with the rule crossing it where the bar would go. That is why only the first lobe is solid: it is
+the one doing a letter's job, and the wave carried on behind the name is the diagram.
 
-A–C stand on a vertical axis because the first photo of the sketch arrived rotated a
-quarter turn. Righted, the drawing is horizontal — that is what G is. A–C are finished
-work either way, and they are the only cuts that give a tall lockup.
+| file | |
+|---|---|
+| `H-lockup` | the wave carried behind the whole name, ghosted |
+| `H-quiet` | just the opening lobe and its opposite phase |
+| `H-bare` | the lobe alone, no ghost, no × |
+| `H-nocross` | carried, without the × at the crest |
+| `H-icon` | the A on its own, at the small cut's weight |
 
-Each direction ships a display cut and an **icon cut**. The icon is redrawn, not
-resized: below roughly 80px the display stroke goes sub-pixel and the mark greys out,
-so the icon takes a tighter crop, a stroke about four times heavier, and no dashes.
+**A, B, C — the vertical set.** Three antinodes both phases solid; one lobe one side; and one
+instant solid with the other ghosted. Each ships stacked, horizontal, mark and icon.
+
+These stand on a *vertical* axis because the first photo of the sketch arrived rotated a quarter
+turn. Righted, the drawing is horizontal — that is what H is. A–C are finished work either way,
+and they are the only cuts that give a tall lockup.
+
+An Archivo family (D–G) was cut and dropped: too thick for the drawing, and it kept arriving at
+type sitting beside a wave rather than type made out of one. It is in the first commit if it is
+ever wanted.
+
+Every direction ships a display cut and an **icon cut**. The icon is redrawn, not resized: below
+roughly 80px the display stroke goes sub-pixel and the mark greys out, so the icon takes a tighter
+crop, a heavier stroke, and no dashes.
 
 ## Rebuilding
 
@@ -49,13 +59,13 @@ npx svgo -f logos --multipass   # from the repo root, between the first and seco
 
 ## Still to do
 
-Waiting on a direction being picked, since there is no sense cutting these seven times
+Waiting on a direction being picked, since there is no sense cutting these four times
 over: PNG exports at set sizes, a one-colour reversed set, and clear-space plus
 minimum-size rules.
 
 ## Type
 
-[Cormorant Garamond](https://github.com/CatharsisFonts/Cormorant) and
-[Archivo](https://github.com/google/fonts/tree/main/ofl/archivo), both SIL Open Font
-License — see `build/fonts/`. The wordmarks are outlined, so neither font is needed to
-render a logo.
+The logos are [Cormorant Garamond](https://github.com/CatharsisFonts/Cormorant); this page
+is set in [Archivo](https://github.com/google/fonts/tree/main/ofl/archivo). Both SIL Open
+Font License — see `build/fonts/`. The wordmarks are outlined, so neither font is needed
+to render a logo.
