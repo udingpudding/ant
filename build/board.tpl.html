@@ -13,6 +13,9 @@
     src: url(data:font/woff2;base64,{{FONT_BLACK}}) format("woff2"); }
   @font-face { font-family: "Ar"; font-weight: 800; font-style: italic; font-display: block;
     src: url(data:font/woff2;base64,{{FONT_BLACKIT}}) format("woff2"); }
+  /* the face drawn for the mark, so the specimen below is live text and not a picture of type */
+  @font-face { font-family: "An"; font-weight: 400; font-style: normal; font-display: block;
+    src: url(data:font/woff2;base64,{{ANTINODE_WOFF2}}) format("woff2"); }
 
   /* One committed light world, matching the reference. No dark variant on
      purpose — the palette is the brief, not a default to be inverted. */
@@ -92,6 +95,28 @@
   .spec code, code { font: 500 .875rem var(--mono); color: var(--rust); }
   .build-dim { font: 400 15px var(--mono); }
 
+  /* ---- specimen ---- */
+  .spm { background: var(--card); border: 1px solid var(--rule);
+         padding: clamp(1.3rem, 4vw, 2.6rem); overflow-x: auto; }
+  .spm p { font-family: "An", var(--ar); margin: 0 0 1.05rem; max-width: none;
+           white-space: nowrap; color: var(--ink); }
+  .spm p:last-child { margin-bottom: 0; }
+  .spm .xl { font-size: clamp(1.9rem, 6.6vw, 4rem); letter-spacing: .05em; line-height: 1.12; }
+  .spm .lg { font-size: clamp(1.15rem, 3.1vw, 1.9rem); letter-spacing: .11em; line-height: 1.3; }
+  .spm .md { font-size: clamp(.95rem, 2vw, 1.2rem); letter-spacing: .15em; line-height: 1.4; }
+  .spm .sm { font-size: .8125rem; letter-spacing: .2em; line-height: 1.5; color: var(--muted); }
+  .spm .alt { font-feature-settings: "ss01" 1; }
+  .diagram { background: var(--card); border: 1px solid var(--rule);
+             padding: clamp(1.2rem, 3.5vw, 2.2rem); display: grid; place-items: center; }
+  .diagram svg { display: block; width: 100%; height: auto; }
+  .diagram + .cap { font-size: .8125rem; color: var(--muted); margin-top: .7rem; line-height: 1.6; }
+  .two-eq { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: clamp(1.2rem, 3vw, 2rem); align-items: start; }
+  .dl { display: inline-flex; align-items: baseline; gap: .5rem; font: 700 .8125rem/1 var(--ar);
+        letter-spacing: .12em; text-transform: uppercase; color: var(--rust);
+        border: 1.5px solid var(--rust); padding: .7rem .9rem .6rem; text-decoration: none; }
+  .dl span { font: 400 .75rem var(--mono); letter-spacing: 0; text-transform: none; color: var(--muted); }
+
   /* ---- files ---- */
   .faces { display: flex; flex-direction: column; gap: 1rem; }
   .face { background: var(--card); border: 1px solid var(--rule); padding: clamp(1rem, 3vw, 1.8rem) clamp(1.1rem, 3vw, 2.2rem); }
@@ -122,11 +147,12 @@
 <div class="wrap">
 
   <header class="hero">
-    <p class="eyebrow">Antinode &middot; logo study &middot; 18 August 2026</p>
-    <h1>The A is not written.<br><em>It is the first lobe.</em></h1>
-    <p class="lede">The sketch rebuilt as vector. Real sine curves, real font outlines, pen
-      weights measured off the type rather than guessed.</p>
-    <div class="showpiece">{{H-lockup}}</div>
+    <p class="eyebrow">Antinode &middot; logo study &middot; 19 August 2026</p>
+    <h1>The N is an arch.<br><em>So the face was drawn.</em></h1>
+    <p class="lede">Your sketch uses a letter no font ships. Rather than substitute one, the
+      alphabet was cut from the drawing's own rules — and the mark rebuilt out of it, to the
+      measurements traced off the photograph.</p>
+    <div class="showpiece">{{J-lockup}}</div>
   </header>
 
   <section class="two">
@@ -141,13 +167,22 @@
         <li><b>01</b><span>The straight line is the <strong>axis</strong> — the string at rest. Everything hangs off it.</span></li>
         <li><b>02</b><span>The lobes alternate across it: not a squiggle but a <strong>standing wave</strong>, drawn at both extremes of its swing.</span></li>
         <li><b>03</b><span>The axis is also the <strong>baseline</strong>. The word stands on the same line the wave swings about — one line doing both jobs.</span></li>
-        <li><b>04</b><span>The <strong>A is never drawn</strong>. The wave's opening crest stands in its place, and the name runs on from there — which is why that lobe is the only solid one and everything after it is dashed. It is the one doing a letter's job.</span></li>
+        <li><b>04</b><span>The <strong>A is never drawn</strong>. The wave's opening lens stands in its place — and because the axis runs through the middle of that lens, it lands exactly where an A's bar goes. That is why the first lobe is the only solid one and everything after it is dashed. It is the one doing a letter's job.</span></li>
+        <li><b>05</b><span>Both <strong>N's are arches</strong>, not diagonals — the lobe one size down. That is the letter no font ships, and the reason there is now a typeface.</span></li>
+        <li><b>06</b><span>The name is <strong>inside the wave</strong>, not beside it. Measured off the photograph, the word starts at the second node and its set width is exactly one full period: word and wave finish together.</span></li>
       </ul>
       <h3 style="margin-top:.4rem">A correction worth stating plainly</h3>
       <p class="note">The first photo came in rotated a quarter turn, so I read the axis as vertical
         and built A&ndash;C as tall lockups with the name running down the line. Righted, the sketch
-        is horizontal. <strong>G is what you actually drew.</strong> A&ndash;C are still finished work
+        is horizontal. <strong>J is what you actually drew.</strong> A&ndash;C are still finished work
         and still hold up — they are just a different logo from the one on the paper.</p>
+      <h3 style="margin-top:.4rem">What the numbers came from</h3>
+      <p class="note">Nothing in J was chosen by eye. The wave's upper envelope was traced column by
+        column off the photograph, the axis found from its ink profile, and the lettering measured
+        from its bounding box: axis at y&thinsp;=&thinsp;229, cap height 31&nbsp;px, amplitude
+        85&nbsp;px, half period 112&nbsp;px, word 217&nbsp;px. In cap heights that is
+        <strong>2.74</strong> amplitude, <strong>3.61</strong> half period, and a word
+        <strong>7.00</strong> caps long — one full period, to within half a unit.</p>
       <h3 style="margin-top:.4rem">A family that was cut and dropped</h3>
       <p class="note">A set in <strong>Archivo</strong> — heavier, geometric, matching this page's own
         type — got as far as four finished directions before it was scrapped. It was too thick for the
@@ -159,8 +194,74 @@
 
   {{PLATES}}
 
+  <section class="col" style="gap:1.6rem">
+    <p class="eyebrow">The typeface</p>
+    <h2>One curve, five jobs.<br><em>Antinode, 54 glyphs, one pen.</em></h2>
+    <p class="note">In the sketch both N&rsquo;s are drawn as arches — the wave&rsquo;s lobe one
+      size down. No shipping font has that letter, so every cut before this one had to substitute
+      a diagonal N and lose the idea. Drawing the face fixes that, and it settles the A as well:
+      the A here is the same arch with a bar through it, which is exactly what the mark does when
+      the axis crosses the opening lens. The drawing never has to write one.</p>
+
+    <div class="diagram">{{spec-parts}}</div>
+    <p class="cap">The shoulder in rust. Left to right: the wave&rsquo;s lobe at the letters&rsquo;
+      scale, then the same superellipse standing in as N, as A, inverted as U, and turned a quarter
+      to make the bowl of D. Nothing in the face is placed by hand — every glyph is a skeleton
+      inflated by one pen, and the pen is a single number.</p>
+
+    <div class="spm">
+      <p class="xl">ANTINODE</p>
+      <p class="lg">ABCDEFGHIJKLM</p>
+      <p class="lg">NOPQRSTUVWXYZ</p>
+      <p class="md">0123456789 &amp; ( ) , . : ; - ! ? &rsquo; &rdquo; /</p>
+      <p class="md alt">ANTINODE &nbsp;&mdash;&nbsp; ss01, the round E</p>
+      <p class="sm">STANDING WAVE &middot; THE POINT THAT SWINGS FURTHEST FROM REST</p>
+    </div>
+    <p class="cap" style="margin-top:-.4rem">Live text, not a picture of it — the WOFF2 is
+      embedded in this page. Lowercase types the caps, so the face never drops a character.</p>
+
+    <div class="two-eq">
+      <div class="col" style="gap:.7rem">
+        <div class="diagram">{{spec-arch}}</div>
+        <p class="cap" style="margin-top:0">Why the letter&rsquo;s arch is not the wave&rsquo;s
+          sine. Over the same span the two curves nearly agree, but at the node a sine leaves the
+          axis at 63&deg; and a letter has to stand at 90&deg;. The shoulder is a superellipse,
+          exponent 2.5 — flat enough on top to read as a shoulder, vertical where it lands on a
+          stem. It is the curve the pencil actually drew.</p>
+      </div>
+      <div class="col" style="gap:1.1rem">
+        <dl class="spec">
+          <dt>Metrics</dt><dd>1000 upem, cap 700, pen <strong>66</strong> — 0.094&nbsp;cap,
+            measured off the pencil. Glyph width 560 (0.80&nbsp;cap), sidebearing 91.
+            The sketch runs 0.77&ndash;0.83; 0.80 splits it.</dd>
+          <dt>Method</dt><dd>Skeletons, miter-offset to a constant width and refitted as cubics.
+            The band measures 66.000 units at every sample; the worst curve fit across the face is
+            <strong>0.44 units</strong>, 0.06% of cap.</dd>
+          <dt>Coverage</dt><dd>A&ndash;Z, 0&ndash;9, <code>&amp; ( ) , . : ; - &ndash; &mdash; ! ? &rsquo; &rdquo; /</code>,
+            space. Lowercase mapped to the caps. 78 codepoints, 54 glyphs.</dd>
+          <dt>Features</dt><dd><code>ss01</code> swaps the E for the round one from your lower
+            sketch. <code>kern</code> carries 16 pairs — the face barely needs more, because
+            A, N, U and the bowls all stand on vertical sides.</dd>
+          <dt>Overlaps</dt><dd>Removed with skia-pathops, so these are clean production cuts and
+            not contours relying on winding order to look right.</dd>
+          <dt>Extrapolated</dt><dd>Seven letters come straight off your paper —
+            <strong>A N T I O D E</strong>. The other nineteen are mine, built to the same rules.
+            <strong>B G K Q R S W</strong> are the ones to look hardest at.</dd>
+        </dl>
+        <div>
+          <a class="dl" href="data:font/otf;base64,{{ANTINODE_OTF}}" download="Antinode-Regular.otf">
+            Download the OTF <span>13&nbsp;KB</span></a>
+        </div>
+        <p class="note" style="font-size:.8125rem">Also in the repo as <code>.ttf</code> and
+          <code>.woff2</code>, under <code>font/</code>. Change the pen or the width in
+          <code>glyphs.py</code> and the whole face re-cuts — and the wordmark with it, because
+          the mark is set from the same outlines.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="col" style="gap:1.5rem">
-    <p class="eyebrow">Typefaces</p>
+    <p class="eyebrow">The search that led here</p>
     <h2>Thin, wide, and spaced out.<br><em>Dune, not a game title.</em></h2>
     <p class="note">The register those films share — <em>Dune</em>, <em>Passengers</em>,
       <em>Stowaway</em> — is quiet and technical: hairline weights, wide forms, generous tracking.
@@ -172,10 +273,10 @@
       lighter, the wave thins with it for free. Each weight below is measured off its own font's
       <em>O</em>, never chosen.</p>
     <div class="faces">{{FACES}}</div>
-    <p class="note">One thing none of them do: in your sketch the <strong>N is an arch</strong> —
-      the same form as the lobe, just smaller. That makes the mark a system rather than a wave plus
-      a word, and it is the strongest idea on the paper after the implied A. No font ships that N,
-      so it would have to be drawn. Say the word and I will.</p>
+    <p class="note">Nine faces, and the same thing missing from all of them: the arched N. That is
+      what sent this to a drawn alphabet — the section above. These stay on the board because the
+      search is worth seeing, and because if the drawn face is ever the wrong answer,
+      <strong>Saira Expanded Light</strong> is where I would go instead.</p>
   </section>
 
   <section class="two">
@@ -183,7 +284,9 @@
     <div class="col" style="gap:1.5rem">
       <h2>How it is built</h2>
       <dl class="spec">
-        <dt>Curve</dt><dd>An actual sine, <code>x = A sin(2&pi;y / &lambda;)</code>, not arcs. In A&ndash;C the amplitude equals half the lobe, so each antinode is as wide as it is tall.</dd>
+        <dt>Curve</dt><dd>An actual sine, <code>x = A sin(2&pi;y / &lambda;)</code>, not arcs. In A&ndash;C the amplitude equals half the lobe; in J it follows the photograph, <code>L / A = 1.32</code>.</dd>
+        <dt>One pen</dt><dd>J's wave, axis and letters are all <code>9.43</code> at cap 100 — not matched by eye but taken from the typeface: it is <code>W / cap</code> of Antinode itself. Change the face's pen and the wave follows.</dd>
+        <dt>The word</dt><dd>Tracking is solved, not tasted. <code>0.007&nbsp;em</code> is the value that makes NTINODE measure exactly <code>2&thinsp;&times;&thinsp;L</code>; the build asserts it to within half a unit and fails if a glyph ever changes width.</dd>
         <dt>Fit</dt><dd>Four cubic segments per lobe, each carrying the sine's own tangent. Worst deviation from the true curve is 0.09% of amplitude — a tenth of the stroke, so it cannot be seen.</dd>
         <dt>The A</dt><dd>The opening lobe stands 1.38 caps tall and 2.15 caps wide, so it reads oversized among the letters rather than as one of them. The axis crosses it where an A's bar would sit.</dd>
         <dt>Wordmarks</dt><dd>Converted to outlines. No font file is needed to render them, and nothing shifts on a machine without Cormorant installed.</dd>
@@ -207,6 +310,32 @@
     <p class="eyebrow">Files</p>
     <h2>Everything regenerates from one script.</h2>
     <div class="files">
+      <div>
+        <h3>logos/ &mdash; J</h3>
+        <ul>
+          <li>antinode-J-lockup.svg</li>
+          <li>antinode-J-reflected.svg</li>
+          <li>antinode-J-dashed.svg</li>
+          <li>antinode-J-solid.svg</li>
+          <li>antinode-J-cross.svg</li>
+          <li>antinode-J-mark.svg</li>
+          <li>antinode-J-stacked.svg</li>
+          <li>antinode-J-icon.svg</li>
+          <li>antinode-J-mark-solid.svg</li>
+          <li>antinode-J-word.svg</li>
+        </ul>
+      </div>
+      <div>
+        <h3>font/ &amp; specimen/</h3>
+        <ul>
+          <li>Antinode-Regular.otf</li>
+          <li>Antinode-Regular.ttf</li>
+          <li>Antinode-Regular.woff2</li>
+          <li>alphabet.svg</li>
+          <li>waterfall.svg</li>
+          <li>parts.svg &middot; arch.svg</li>
+        </ul>
+      </div>
       <div>
         <h3>logos/ &mdash; H</h3>
         <ul>
@@ -239,9 +368,8 @@
     <p class="note">Those three wait on you picking a direction — no sense cutting an export set four
       times over. Vector masters are black on transparent; swapping <code>#141312</code> for anything
       else is one find-and-replace.</p>
-    <pre>cd build
-python3 -m pip install fonttools brotli
-python3 build-antinode.py        # rewrites ../logos</pre>
+    <pre>python3 -m pip install fonttools brotli skia-pathops
+./build/rebuild.sh   # font, marks, specimens, svgo, page — in the one order that works</pre>
   </section>
 
 </div>

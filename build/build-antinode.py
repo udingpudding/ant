@@ -11,12 +11,17 @@ typeface rather than picked by eye. Re-running regenerates all of it.
     B  single antinode one lobe, one side
     C  phase           one instant solid, the other ghosted, crest marked
     H  implied A      the opening lobe stands in for the A, the name follows
+    J  the drawing     three lobes and their mirrors, the name inside them,
+                       set in Antinode - a face drawn for it, because the
+                       sketch's N is an arch no shipping font has
 
 All four set the word in Cormorant Garamond Light. An Archivo family (D-G)
 was cut and dropped — too heavy, and it read as type beside a wave rather
 than type made of one. It is in the first commit if it is ever wanted.
 """
-import math, os
+import math, os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import glyphs, setter
 from fontTools.ttLib import TTFont
 from fontTools.varLib import instancer
 from fontTools.pens.basePen import BasePen
@@ -223,11 +228,12 @@ def svg(w, h, body, vx=0.0, vy=0.0):
     )
 
 
-def stroked(paths, dash=None, sw=None):
+def stroked(paths, dash=None, sw=None, opacity=None):
     sw = SW if sw is None else sw
     d = f' stroke-dasharray="{dash}"' if dash else ""
+    o = f' stroke-opacity="{opacity}"' if opacity else ""
     return (
-        f'<g fill="none" stroke="{INK}" stroke-width="{sw}" stroke-linecap="butt" stroke-linejoin="miter"{d}>\n'
+        f'<g fill="none" stroke="{INK}" stroke-width="{sw}" stroke-linecap="butt" stroke-linejoin="miter"{d}{o}>\n'
         + "\n".join(f'  <path d="{p}"/>' for p in paths)
         + "\n</g>"
     )
@@ -556,6 +562,152 @@ files["antinode-H-icon.svg"] = implied_icon()
 files["antinode-H-icon-plain.svg"] = implied_icon(cross=False)
 
 
+# --------------------------------------------------------------- J, the drawing
+# Every number below was traced off the photograph rather than chosen: the
+# upper envelope of the pencil wave, the ink profile of the axis, and the
+# bounding box of the lettering. See the README for the measurements.
+JCAP = 100.0
+JW = round(glyphs.W / glyphs.CAP * JCAP, 2)   # 9.43 - literally the letters' stroke
+JAMP = JCAP * 2.74                            # amplitude, axis to crest
+JL = JCAP * 3.61                              # half period, node to node
+JLOBES = 3
+JTRACK = 0.007      # solved, not taste: it makes the word exactly one period
+JPAD = JCAP * 0.62
+JTAIL = JCAP * 0.78
+JGHOST = 0.40       # the carried wave, as light as the pencil left it
+JICON_SW = round(JW * 3.6, 2)
+
+REST = WORD[1:]                               # NTINODE - the A is the first lens
+JINK, JOFF = setter.ink_width(REST, JCAP, JTRACK)
+assert abs(JINK - 2 * JL) < 0.5, f"the word must span one period, not {JINK:.2f}"
+
+
+def jlens(i, amp=None, half=None):
+    """One antinode as a closed contour: the sine and its mirror over the same
+    half period. Two open strokes meeting at a node cannot form a point."""
+    amp = JAMP if amp is None else amp
+    half = JL if half is None else half
+    x0 = i * half
+    return (sine(amp, half, 1, horizontal=True, x0=x0) + " "
+            + sine(amp, half, 1, mirror=True, horizontal=True, x0=x0,
+                   reverse=True, move=False) + " Z")
+
+
+def jcross(i, amp=None, half=None, size=None):
+    amp = JAMP if amp is None else amp
+    half = JL if half is None else half
+    s = (JCAP * 0.17 if size is None else size)
+    cx, cy = (i + 0.5) * half, -amp
+    return [f"M {cx-s:.1f} {cy-s:.1f} L {cx+s:.1f} {cy+s:.1f}",
+            f"M {cx-s:.1f} {cy+s:.1f} L {cx+s:.1f} {cy-s:.1f}"]
+
+
+def jframe(body, lobes=JLOBES, tail=JTAIL, amp=None, extra_below=0.0):
+    amp = JAMP if amp is None else amp
+    w = lobes * JL + 2 * tail + 2 * JPAD
+    h = 2 * amp + 2 * JPAD + extra_below
+    return svg(w, h, body, -(tail + JPAD), -(amp + JPAD))
+
+
+def jwave(lobes=JLOBES, decay=True, dash=False, solid_first=True):
+    """The wave. The opening lens is the one doing a letter's job, so it keeps
+    full ink; the rest is the diagram carrying on behind the name."""
+    out = []
+    if not decay:
+        return [stroked([jlens(i) for i in range(lobes)], sw=JW)]
+    if solid_first:
+        out.append(stroked([jlens(0)], sw=JW))
+    rest = [jlens(i) for i in range(1 if solid_first else 0, lobes)]
+    if rest:
+        d = f"{JW * 2.9:.1f} {JW * 2.4:.1f}" if dash else None
+        out.append(stroked(rest, sw=JW, dash=d,
+                           opacity=None if dash else JGHOST))
+    return out
+
+
+def jaxis(lobes=JLOBES, tail=JTAIL, opacity=None):
+    return stroked([f"M {-tail:.1f} 0 L {lobes * JL + tail:.1f} 0"],
+                   sw=JW, opacity=opacity)
+
+
+def jtype(y=0.0, flip=True, opacity=None, alt=()):
+    d, _ = setter.word(REST, JCAP, JTRACK, x=JL - JOFF, y=y, flip=flip, alt=alt)
+    o = f' fill-opacity="{opacity}"' if opacity else ""
+    return f'<path d="{d}"{o}/>'
+
+
+def lockup(decay=True, dash=False, word=True, cross=False, reflect=False, alt=()):
+    body = jwave(decay=decay, dash=dash)
+    body.append(jaxis())
+    if cross:
+        body.append(stroked(jcross(0), sw=JW))
+    if reflect:
+        body.append(jtype(flip=False, opacity=0.34, alt=alt))
+    if word:
+        body.append(jtype(alt=alt))          # last, so the wave weaves behind it
+    return jframe("\n".join(body))
+
+
+def jmark(decay=True, cross=False):
+    body = jwave(decay=decay)
+    body.append(jaxis())
+    if cross:
+        body.append(stroked(jcross(0), sw=JW))
+    return jframe("\n".join(body))
+
+
+def jstacked():
+    """Mark over word, for a tall space. The word sets to the wave's own width
+    so the two edges line up."""
+    gap = JCAP * 0.92
+    scale = (JLOBES * JL) / JINK
+    y = JAMP + gap + JCAP * scale
+    d, _ = setter.word(WORD, JCAP * scale, JTRACK,
+                       x=-setter.ink_width(WORD, JCAP * scale, JTRACK)[1], y=y)
+    body = jwave() + [jaxis(tail=JTAIL * 0.5), f'<path d="{d}"/>']
+    return jframe("\n".join(body), tail=JTAIL * 0.5,
+                  extra_below=gap + JCAP * scale)
+
+
+def jicon(cross=True):
+    """Redrawn, not scaled. Below about 64px the display pen is sub-pixel, so
+    the small cut gets a tighter crop and a pen nearly four times as heavy."""
+    amp, half = JCAP * 2.05, JCAP * 2.70
+    stub = JCAP * 0.34
+    body = [stroked([jlens(0, amp, half)], sw=JICON_SW),
+            stroked([f"M {-stub:.1f} 0 L {half + stub:.1f} 0"], sw=JICON_SW)]
+    if cross:
+        body.append(stroked(jcross(0, amp, half, JCAP * 0.30), sw=JICON_SW))
+    pad = JCAP * 0.30
+    return svg(half + 2 * stub + 2 * pad, 2 * amp + 2 * pad,
+               "\n".join(body), -(stub + pad), -(amp + pad))
+
+
+def jword(alt=()):
+    ink, off = setter.ink_width(WORD, JCAP, JTRACK, alt=alt)
+    d, _ = setter.word(WORD, JCAP, JTRACK, x=-off, y=0, alt=alt)
+    pad = JCAP * 0.30
+    return svg(ink + 2 * pad, JCAP + 2 * pad, f'<path d="{d}"/>', -pad, -(JCAP + pad))
+
+
+files.update({
+    "antinode-J-lockup.svg": lockup(),
+    "antinode-J-solid.svg": lockup(decay=False),
+    "antinode-J-dashed.svg": lockup(dash=True),
+    "antinode-J-reflected.svg": lockup(reflect=True),
+    "antinode-J-cross.svg": lockup(cross=True),
+    "antinode-J-mark.svg": jmark(),
+    "antinode-J-mark-solid.svg": jmark(decay=False),
+    "antinode-J-stacked.svg": jstacked(),
+    # the icon drops the cross: below about 32px the mark merges into the crest
+    # and reads as a blot. It stays a display-only detail, as in C.
+    "antinode-J-icon.svg": jicon(cross=False),
+    "antinode-J-icon-cross.svg": jicon(),
+    "antinode-J-word.svg": jword(),
+    "antinode-J-word-alt.svg": jword(alt=(7,)),
+})
+
+
 def diagram():
     """Construction drawing for the board: one antinode and the two numbers
     everything else derives from. Annotations use a second colour the page
@@ -597,4 +749,6 @@ if __name__ == "__main__":
     for tag, half in (("E", GCAP / 2), ("F", GCAP + SEAM / 2)):
         lam, _, amp = lens_fit(FRAC[tag], half)
         print(f"lens {tag}  {lam:.0f} x {2 * amp:.0f}  ({lam / (2 * amp):.2f}:1)")
+    print(f"J      cap {JCAP:.0f}  pen {JW}  lobe {JL:.0f} x {JAMP:.0f} "
+          f"(L/A {JL / JAMP:.2f})  word {JINK:.0f} = {JINK / JL:.2f} L")
     print(f"{len(files)} files -> {OUT}")

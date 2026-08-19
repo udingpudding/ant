@@ -10,6 +10,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 LOGOS = os.path.join(HERE, os.pardir, "logos")
 TMP = os.path.join(HERE, "tmp")
 TYPE = os.path.join(HERE, os.pardir, "type-study")
+SPEC = os.path.join(HERE, os.pardir, "specimen")
+FACE = os.path.join(HERE, os.pardir, "font")
 SKETCH = os.path.join(HERE, "sketch.jpg")
 FONTS = os.path.join(HERE, "fonts")
 
@@ -43,7 +45,7 @@ for name, (fname, axes) in CUTS.items():
 sketch = base64.b64encode(open(SKETCH, "rb").read()).decode()
 
 marks = {}
-for folder in (LOGOS, TMP, TYPE):
+for folder in (LOGOS, TMP, TYPE, SPEC):
     for f in sorted(os.listdir(folder)):
         if not f.endswith(".svg"):
             continue
@@ -51,9 +53,21 @@ for folder in (LOGOS, TMP, TYPE):
         s = s.replace("#141312", "currentColor").replace("#2d6b5f", "var(--rust)")
         s = re.sub(r'\swidth="[\d.]+"\sheight="[\d.]+"', "", s, count=1)
         key = f[:-4].replace("antinode-", "")
-        marks[("face-" + key) if folder == TYPE else key] = s
+        if folder == TYPE:
+            key = "face-" + key
+        elif folder == SPEC:
+            key = "spec-" + key
+        marks[key] = s
+
+# the face drawn for the mark: woff2 so the page can set live text in it, and
+# the OTF so the page can hand it over installable
+antinode = {k: base64.b64encode(open(os.path.join(FACE, f"Antinode-Regular.{k}"), "rb").read()).decode()
+            for k in ("woff2", "otf")}
+print(f"  antinode woff2 {len(antinode['woff2']) * 3 // 4096}KB · otf "
+      f"{len(antinode['otf']) * 3 // 4096}KB")
 
 bundle = os.path.join(TMP, "_assets.json")
-json.dump({"faces": faces, "sketch": sketch, "marks": marks}, open(bundle, "w"))
+json.dump({"faces": faces, "sketch": sketch, "marks": marks, "antinode": antinode},
+          open(bundle, "w"))
 print(f"  sketch {os.path.getsize(SKETCH) / 1024:.0f}KB · {len(marks)} marks "
       f"· bundle {os.path.getsize(bundle) / 1024:.0f}KB")

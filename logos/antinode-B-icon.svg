@@ -1,6 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15.5 -34.0 125.5 268.0" width="126" height="268" fill="#141312">
-<g fill="none" stroke="#141312" stroke-width="11.0" stroke-linecap="butt" stroke-linejoin="miter">
-  <path d="M 0 -24.0 L 0 224.0"/>
-  <path d="M 0.00 0.00 C 26.18 16.67 52.20 33.33 70.71 50.00 C 89.22 66.67 100.00 83.33 100.00 100.00 C 100.00 116.67 89.22 133.33 70.71 150.00 C 52.20 166.67 26.18 183.33 -0.00 200.00"/>
-</g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="126" height="268" fill="#141312" viewBox="-15.5 -34 125.5 268"><path fill="none" stroke="#141312" stroke-width="11" d="M0-24v248M0 0c26.18 16.67 52.2 33.33 70.71 50S100 83.33 100 100s-10.78 33.33-29.29 50S26.18 183.33 0 200"/></svg>

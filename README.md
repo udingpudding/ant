@@ -8,7 +8,42 @@ photo and every mark are inlined, so it works from `file://` with nothing served
 
 ## What is here
 
-`logos/` holds the vector masters, black on transparent, all set in Cormorant Garamond Light.
+`logos/` holds the vector masters, black on transparent. **J** is set in Antinode, the face
+drawn for it (`font/`); everything else is Cormorant Garamond Light.
+
+**J — the drawing, whole.** The top sketch rebuilt to its own measurements. Three lobes above the
+axis, three mirrored below — a standing wave at both extremes of its swing, which makes three lens
+shapes in a row. The name lives *inside* them: it starts at the second node and its set width is
+exactly one full period, so word and wave finish together. The opening lens is the A; it keeps
+full ink because it is doing a letter's job, and the two behind the name are the diagram carrying
+on.
+
+Nothing in it was chosen by eye. The wave's upper envelope was traced column by column off the
+photograph, the axis found from its ink profile, the lettering measured from its bounding box:
+
+| measured on the photo | | in cap heights |
+|---|---|---|
+| cap height | 31 px | 1.00 |
+| amplitude, axis to crest | 85 px | **2.74** |
+| half period, node to node | 112 px | **3.61** |
+| word set width | 217 px | **7.00** — one full period |
+| stroke | ~3 px | 0.095 |
+
+The build asserts the word measures `2 × L` to within half a unit and fails if a glyph ever
+changes width. The wave, the axis and the letters share one pen because the pen *is* the
+typeface's stroke — `glyphs.W / glyphs.CAP`, not a number matched by eye.
+
+| file | |
+|---|---|
+| `J-lockup` | **primary** — first lens solid, the carried two tinted, name on the axis |
+| `J-reflected` | plus the mirrored word below the axis, as the sketch draws it |
+| `J-dashed` | the carried lobes dashed instead of tinted |
+| `J-solid` | every lens at full ink — one colour, safe for single-ink reproduction |
+| `J-cross` | with the × you put at the crest |
+| `J-mark` | the three-lens figure alone |
+| `J-stacked` | mark over word, widths aligned |
+| `J-icon` | one lens, redrawn at the small cut's weight (`-cross` adds the ×) |
+| `J-word` | ANTINODE set plain (`-alt` uses the round E) |
 
 **H — the implied A.** The sketch, read whole. The axis runs horizontally and the name stands
 on it, and the wave's opening crest is not *beside* the A — it **is** the A, sitting in its slot
@@ -38,7 +73,38 @@ Every direction ships a display cut and an **icon cut**. The icon is redrawn, no
 roughly 80px the display stroke goes sub-pixel and the mark greys out, so the icon takes a tighter
 crop, a heavier stroke, and no dashes.
 
-## Typeface study
+## The typeface
+
+In the sketch both N's are arches — the wave's lobe one size down. **No shipping font has that
+letter**, so every cut before J had to substitute a diagonal N and lose the idea. So it was drawn.
+
+`font/Antinode-Regular.{otf,ttf,woff2}` — a monoline geometric face, A–Z, 0–9 and basic
+punctuation, 54 glyphs over 78 codepoints. Lowercase is mapped to the caps so it never drops a
+character. Built from scratch with fontTools; there is no source in Glyphs or FontForge, because
+there are no hand-placed points to keep — `build/glyphs.py` *is* the source.
+
+The system it buys: one superellipse (exponent 2.5) does five jobs — the wave's lobe, the N, the
+A (the same arch with a bar, which is exactly what the axis does to the opening lens), the U
+inverted, and D's bowl turned a quarter. `specimen/parts.svg` draws it.
+
+Why a superellipse and not the sine itself: over the same span the two nearly agree, but at the
+node a sine leaves the axis at 63° and a letter has to stand at 90°. `specimen/arch.svg`.
+
+| | |
+|---|---|
+| metrics | 1000 upem, cap 700, pen **66** (0.094 cap), width 560 (0.80 cap), sidebearing 91 |
+| method | skeletons miter-offset to constant width, refitted as cubics |
+| accuracy | band width 66.000 units at every sample; worst curve fit **0.44 units**, 0.06% of cap |
+| features | `ss01` swaps in the round E from your lower sketch; `kern` carries 16 pairs |
+| overlaps | removed with skia-pathops — clean cuts, not contours relying on winding order |
+
+Seven letters come straight off your paper — **A N T I O D E**. The other nineteen are
+extrapolated to the same rules; **B G K Q R S W** are the ones to look hardest at. The one place
+the face could be judged confusable is that A and N differ only by a bar. That is the system, and
+it is why the mark works; if it bothers you when set, the fix is to splay the A's legs slightly
+and keep the arch shared.
+
+## Typeface study, before it was drawn
 
 `type-study/` cuts the same H lockup in nine faces, plus Cormorant for comparison. The register
 the reference films share — *Dune*, *Passengers*, *Stowaway* — is thin, wide and generously
@@ -55,8 +121,9 @@ to match, so its pen is a compromise between hairline and stem. A monoline face 
 stroke, and `Face.pen()` hands the wave that number — the curve and the letters become literally
 the same pen. Every weight on this page is measured off its own font's `O`, never chosen.
 
-None of the six has the sketch's **arched N** (`∩`), which is the lobe's own form one size down.
-That would have to be drawn.
+None of the nine has the sketch's **arched N** (`∩`). That is what sent this to a drawn alphabet.
+They stay on the board because the search is worth seeing — and because if the drawn face is ever
+the wrong answer, **Saira Expanded Light** is where I would go instead.
 
 ## Rebuilding
 
@@ -64,18 +131,21 @@ Nothing is traced or hand-tuned. The lobes are a real sine, the letters are real
 outlines converted to paths, and stroke weights are measured off the typefaces.
 
 ```sh
-cd build
-python3 -m pip install fonttools brotli
-python3 build-antinode.py     # rewrites ../logos and ../type-study
-python3 assets.py             # subsets fonts, bundles the marks
-python3 page.py               # rewrites ../index.html
+python3 -m pip install fonttools brotli skia-pathops
+./build/rebuild.sh
 ```
 
-Optional, and worth it — it takes about 15% off the paths:
+That is the whole chain in the one order that works — font, marks, specimens, svgo, page. Run
+the steps by hand if you like, but note **svgo only honours a single `-f` per invocation**:
+passing three folders silently optimises only the last, and `build-antinode.py` rewrites
+`type-study/` as well as `logos/`, so both need a pass after it.
 
-```sh
-npx svgo -f logos -f type-study --multipass   # from the repo root, between steps one and two
-```
+`skia-pathops` is optional. Without it the fonts still render correctly — nonzero winding unions
+same-direction contours — but the build says so instead of claiming a clean cut.
+
+`build/geom.py` is the geometry engine (skeleton → constant-width outline), `build/glyphs.py` the
+alphabet, `build/setter.py` sets text from those outlines without the font installed. Change the
+pen or the width in `glyphs.py` and the whole face re-cuts — and the wordmark with it.
 
 ## Still to do
 
@@ -85,7 +155,10 @@ minimum-size rules.
 
 ## Type
 
-The logos are [Cormorant Garamond](https://github.com/CatharsisFonts/Cormorant); this page
-is set in [Archivo](https://github.com/google/fonts/tree/main/ofl/archivo). Both SIL Open
-Font License — see `build/fonts/`. The wordmarks are outlined, so neither font is needed
-to render a logo.
+**Antinode** is drawn here — see `font/`. It carries Uday Sapra as designer and
+"all rights reserved" in its name table; change that in `build/antinode_font.py` before it
+goes anywhere.
+
+A–C and H are set in [Cormorant Garamond](https://github.com/CatharsisFonts/Cormorant); this page
+is set in [Archivo](https://github.com/google/fonts/tree/main/ofl/archivo). Both SIL Open Font
+License — see `build/fonts/`. Every wordmark is outlined, so no font is needed to render a logo.

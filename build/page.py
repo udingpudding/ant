@@ -62,6 +62,23 @@ def group(title, blurb):
   </section>'''
 
 
+plate_j = plate("J", "The drawing, whole",
+    "The top sketch, rebuilt to its own measurements. Three lobes above the axis and three "
+    "mirrored below — a standing wave drawn at both extremes of its swing, which makes three "
+    "lens shapes in a row. The name lives <em>inside</em> them: it starts at the second node "
+    "and its set width is exactly one full period, so the word and the wave finish together. "
+    "The opening lens is the A. It keeps full ink because it is doing a letter's job; the two "
+    "behind the name are the diagram carrying on. Set in <strong>Antinode</strong>, a face cut "
+    "for this mark — see below for why it had to be. Shown carried, reflected, then dashed.",
+    single("J-lockup", "J-reflected", "J-dashed", tag="J"),
+    "Every number in it was traced off the photograph, not chosen: amplitude 2.74 caps, half "
+    "period 3.61 caps, word exactly 2&thinsp;&times;&thinsp;L. The wave, the axis and the letters "
+    "are one pen because the pen is the typeface's own stroke.",
+    "It is the busiest thing here. The carried lobes cross the letters, which is what the pencil "
+    "does too — but it needs the tint to stay readable, so the one-ink cut "
+    "(<code>J-solid</code>) is a harder read than the tinted one.")
+
+
 plate_h = plate("H", "The implied A",
     "The sketch, whole. The axis runs horizontally and the name stands on it, and the wave's "
     "opening crest is not next to the A — it <em>is</em> the A, sitting in its slot with the rule "
@@ -95,8 +112,13 @@ plates = [
           "Dashes break up long before hairlines do. Under roughly 80&nbsp;px it falls back to A's silhouette."),
 ]
 
-plates = [group("The sketch, read right",
-                "The A is never drawn. Start here."),
+plates = [group("What you actually drew",
+                "Three lobes, their mirrors, and the name inside them — measured off the "
+                "photograph and rebuilt, in a face cut for it."),
+          plate_j,
+          group("The sketch, read right",
+                "The same reading, stripped to one lobe and set in a borrowed face. Where this "
+                "started."),
           plate_h,
           group("The vertical set",
                 "Built from the rotated photo, before the drawing was read the right way up. A "
@@ -136,7 +158,8 @@ faces_html = "\n".join(
     f'<p class="why">{why}</p></div>{d["marks"][key]}</div>'
     for key, name, why in FACES)
 
-subs = {"FACES": faces_html, "FONT_REGULAR": d["faces"]["regular"], "FONT_BOLD": d["faces"]["bold"],
+subs = {"FACES": faces_html, "ANTINODE_WOFF2": d["antinode"]["woff2"],
+        "ANTINODE_OTF": d["antinode"]["otf"], "FONT_REGULAR": d["faces"]["regular"], "FONT_BOLD": d["faces"]["bold"],
         "FONT_BLACK": d["faces"]["black"], "FONT_BLACKIT": d["faces"]["blackit"],
         "SKETCH": d["sketch"], "PLATES": "\n".join(plates), **d["marks"]}
 
