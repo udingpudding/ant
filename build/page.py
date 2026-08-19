@@ -71,12 +71,14 @@ plate_j = plate("J", "The drawing, whole",
     "behind the name are the diagram carrying on. Set in <strong>Antinode</strong>, a face cut "
     "for this mark — see below for why it had to be. Shown carried, reflected, then dashed.",
     single("J-lockup", "J-reflected", "J-dashed", tag="J"),
-    "Every number in it was traced off the photograph, not chosen: amplitude 2.74 caps, half "
-    "period 3.61 caps, word exactly 2&thinsp;&times;&thinsp;L. The wave, the axis and the letters "
-    "are one pen because the pen is the typeface's own stroke.",
-    "It is the busiest thing here. The carried lobes cross the letters, which is what the pencil "
-    "does too — but it needs the tint to stay readable, so the one-ink cut "
-    "(<code>J-solid</code>) is a harder read than the tinted one.")
+    "Every number in it was traced off the photograph, not chosen — the proportions and the "
+    "weights both. Four pens, in the ratio the pencil actually holds: the name is the heaviest "
+    "thing in the mark, the drawn lobe and the axis sit under it, and the carried lobes are a "
+    "trace. All four are ratios of the typeface's own stroke, so the whole mark re-weights if "
+    "the face does.",
+    "The carried lobes cross the letters, which is what the pencil does too — and at "
+    "0.30&thinsp;&times; the letter stroke they are the first thing to go at small sizes. That "
+    "is what the redrawn icon cut is for; do not shrink the display cut past about 80&nbsp;px.")
 
 
 plate_h = plate("H", "The implied A",

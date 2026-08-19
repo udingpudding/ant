@@ -567,15 +567,23 @@ files["antinode-H-icon-plain.svg"] = implied_icon(cross=False)
 # upper envelope of the pencil wave, the ink profile of the axis, and the
 # bounding box of the lettering. See the README for the measurements.
 JCAP = 100.0
-JW = round(glyphs.W / glyphs.CAP * JCAP, 2)   # 9.43 - literally the letters' stroke
+# Four weights, not one. Probed off the photograph at the crest and through the
+# stems: the letters run 4px, the drawn lobe 3, the axis 2-3, and the carried
+# lobes 1. The name is the heaviest thing in the mark, the wave is a drawing
+# behind it, and the carried part is a trace — that hierarchy is the drawing.
+JPEN = round(glyphs.W / glyphs.CAP * JCAP, 2)      # letters: the face's own stroke
+JWAVE = round(JPEN * 0.74, 2)                      # the lobe doing a letter's job
+JAXIS = round(JPEN * 0.66, 2)                      # the rule
+JCARRY = round(JPEN * 0.30, 2)                     # the lobes behind the name
+JXPEN = round(JWAVE * 1.7, 2)                      # the cross is emphatic, as drawn
 JAMP = JCAP * 2.74                            # amplitude, axis to crest
 JL = JCAP * 3.61                              # half period, node to node
 JLOBES = 3
 JTRACK = 0.007      # solved, not taste: it makes the word exactly one period
 JPAD = JCAP * 0.62
 JTAIL = JCAP * 0.78
-JGHOST = 0.40       # the carried wave, as light as the pencil left it
-JICON_SW = round(JW * 3.6, 2)
+JXSIZE = JCAP * 0.195   # half-arm; the pencil cross spans about 0.4 cap
+JICON_SW = round(JPEN * 3.6, 2)
 
 REST = WORD[1:]                               # NTINODE - the A is the first lens
 JINK, JOFF = setter.ink_width(REST, JCAP, JTRACK)
@@ -594,9 +602,11 @@ def jlens(i, amp=None, half=None):
 
 
 def jcross(i, amp=None, half=None, size=None):
+    """The mark you put at the crest. It sits *on* the curve, not above it —
+    that point is the antinode itself, the one place the string swings furthest."""
     amp = JAMP if amp is None else amp
     half = JL if half is None else half
-    s = (JCAP * 0.17 if size is None else size)
+    s = (JXSIZE if size is None else size)
     cx, cy = (i + 0.5) * half, -amp
     return [f"M {cx-s:.1f} {cy-s:.1f} L {cx+s:.1f} {cy+s:.1f}",
             f"M {cx-s:.1f} {cy+s:.1f} L {cx+s:.1f} {cy-s:.1f}"]
@@ -614,20 +624,20 @@ def jwave(lobes=JLOBES, decay=True, dash=False, solid_first=True):
     full ink; the rest is the diagram carrying on behind the name."""
     out = []
     if not decay:
-        return [stroked([jlens(i) for i in range(lobes)], sw=JW)]
+        return [stroked([jlens(i) for i in range(lobes)], sw=JWAVE)]
     if solid_first:
-        out.append(stroked([jlens(0)], sw=JW))
+        out.append(stroked([jlens(0)], sw=JWAVE))
     rest = [jlens(i) for i in range(1 if solid_first else 0, lobes)]
     if rest:
-        d = f"{JW * 2.9:.1f} {JW * 2.4:.1f}" if dash else None
-        out.append(stroked(rest, sw=JW, dash=d,
-                           opacity=None if dash else JGHOST))
+        # thinner rather than tinted: a hairline survives one-colour printing,
+        # an opacity does not
+        d = f"{JCARRY * 4.4:.1f} {JCARRY * 3.6:.1f}" if dash else None
+        out.append(stroked(rest, sw=JCARRY, dash=d))
     return out
 
 
-def jaxis(lobes=JLOBES, tail=JTAIL, opacity=None):
-    return stroked([f"M {-tail:.1f} 0 L {lobes * JL + tail:.1f} 0"],
-                   sw=JW, opacity=opacity)
+def jaxis(lobes=JLOBES, tail=JTAIL):
+    return stroked([f"M {-tail:.1f} 0 L {lobes * JL + tail:.1f} 0"], sw=JAXIS)
 
 
 def jtype(y=0.0, flip=True, opacity=None, alt=()):
@@ -636,11 +646,11 @@ def jtype(y=0.0, flip=True, opacity=None, alt=()):
     return f'<path d="{d}"{o}/>'
 
 
-def lockup(decay=True, dash=False, word=True, cross=False, reflect=False, alt=()):
+def lockup(decay=True, dash=False, word=True, cross=True, reflect=False, alt=()):
     body = jwave(decay=decay, dash=dash)
     body.append(jaxis())
     if cross:
-        body.append(stroked(jcross(0), sw=JW))
+        body.append(stroked(jcross(0), sw=JXPEN))
     if reflect:
         body.append(jtype(flip=False, opacity=0.34, alt=alt))
     if word:
@@ -648,11 +658,11 @@ def lockup(decay=True, dash=False, word=True, cross=False, reflect=False, alt=()
     return jframe("\n".join(body))
 
 
-def jmark(decay=True, cross=False):
+def jmark(decay=True, cross=True):
     body = jwave(decay=decay)
     body.append(jaxis())
     if cross:
-        body.append(stroked(jcross(0), sw=JW))
+        body.append(stroked(jcross(0), sw=JXPEN))
     return jframe("\n".join(body))
 
 
@@ -695,7 +705,7 @@ files.update({
     "antinode-J-solid.svg": lockup(decay=False),
     "antinode-J-dashed.svg": lockup(dash=True),
     "antinode-J-reflected.svg": lockup(reflect=True),
-    "antinode-J-cross.svg": lockup(cross=True),
+    "antinode-J-plain.svg": lockup(cross=False),
     "antinode-J-mark.svg": jmark(),
     "antinode-J-mark-solid.svg": jmark(decay=False),
     "antinode-J-stacked.svg": jstacked(),
@@ -749,6 +759,8 @@ if __name__ == "__main__":
     for tag, half in (("E", GCAP / 2), ("F", GCAP + SEAM / 2)):
         lam, _, amp = lens_fit(FRAC[tag], half)
         print(f"lens {tag}  {lam:.0f} x {2 * amp:.0f}  ({lam / (2 * amp):.2f}:1)")
-    print(f"J      cap {JCAP:.0f}  pen {JW}  lobe {JL:.0f} x {JAMP:.0f} "
-          f"(L/A {JL / JAMP:.2f})  word {JINK:.0f} = {JINK / JL:.2f} L")
+    print(f"J      cap {JCAP:.0f}  lobe {JL:.0f} x {JAMP:.0f} (L/A {JL / JAMP:.2f})  "
+          f"word {JINK:.0f} = {JINK / JL:.2f} L")
+    print(f"       pens  letters {JPEN}  wave {JWAVE}  axis {JAXIS}  "
+          f"carried {JCARRY}  cross {JXPEN}")
     print(f"{len(files)} files -> {OUT}")

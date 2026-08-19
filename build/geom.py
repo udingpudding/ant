@@ -2,8 +2,9 @@
 """Skeleton-to-outline geometry: everything the face is drawn with.
 
 A glyph here is a skeleton — polylines and parametric curves — inflated to a
-constant width. That is the whole conceit of the face: one pen, and the same
-pen draws the wave. Nothing is drawn as a filled shape by hand.
+constant width. That is the whole conceit of the face: one pen across the
+alphabet, and every weight in the mark is set as a ratio of it. Nothing is
+drawn as a filled shape by hand.
 """
 import math
 

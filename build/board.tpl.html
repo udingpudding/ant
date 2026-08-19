@@ -168,8 +168,9 @@
         <li><b>02</b><span>The lobes alternate across it: not a squiggle but a <strong>standing wave</strong>, drawn at both extremes of its swing.</span></li>
         <li><b>03</b><span>The axis is also the <strong>baseline</strong>. The word stands on the same line the wave swings about — one line doing both jobs.</span></li>
         <li><b>04</b><span>The <strong>A is never drawn</strong>. The wave's opening lens stands in its place — and because the axis runs through the middle of that lens, it lands exactly where an A's bar goes. That is why the first lobe is the only solid one and everything after it is dashed. It is the one doing a letter's job.</span></li>
-        <li><b>05</b><span>Both <strong>N's are arches</strong>, not diagonals — the lobe one size down. That is the letter no font ships, and the reason there is now a typeface.</span></li>
-        <li><b>06</b><span>The name is <strong>inside the wave</strong>, not beside it. Measured off the photograph, the word starts at the second node and its set width is exactly one full period: word and wave finish together.</span></li>
+        <li><b>05</b><span>The wave is drawn <strong>lighter than the name</strong> — the pencil measures 3&nbsp;px on the lobe against 4 on the letters, and 1 on the carried lobes. The name leads; the wave is a diagram behind it.</span></li>
+        <li><b>06</b><span>Both <strong>N's are arches</strong>, not diagonals — the lobe one size down. That is the letter no font ships, and the reason there is now a typeface.</span></li>
+        <li><b>07</b><span>The name is <strong>inside the wave</strong>, not beside it. Measured off the photograph, the word starts at the second node and its set width is exactly one full period: word and wave finish together.</span></li>
       </ul>
       <h3 style="margin-top:.4rem">A correction worth stating plainly</h3>
       <p class="note">The first photo came in rotated a quarter turn, so I read the axis as vertical
@@ -285,7 +286,8 @@
       <h2>How it is built</h2>
       <dl class="spec">
         <dt>Curve</dt><dd>An actual sine, <code>x = A sin(2&pi;y / &lambda;)</code>, not arcs. In A&ndash;C the amplitude equals half the lobe; in J it follows the photograph, <code>L / A = 1.32</code>.</dd>
-        <dt>One pen</dt><dd>J's wave, axis and letters are all <code>9.43</code> at cap 100 — not matched by eye but taken from the typeface: it is <code>W / cap</code> of Antinode itself. Change the face's pen and the wave follows.</dd>
+        <dt>Four pens</dt><dd>Probed off the photograph — vertically through the crest, horizontally through the stems. The letters run 4&nbsp;px, the drawn lobe 3, the axis 2&ndash;3, the carried lobes 1. So at cap 100: letters <code>9.43</code>, wave <code>6.98</code>, axis <code>6.22</code>, carried <code>2.83</code>, and the &times; heaviest of all at <code>11.87</code>. Each is a ratio of the typeface's own stroke, so changing the face re-weights the mark.</dd>
+        <dt>Not a tint</dt><dd>The carried lobes were tinted at first, which was wrong twice over: the pencil thins them rather than fading them, and an opacity does not survive one-colour printing. They are a hairline now, so every J cut is single-ink safe.</dd>
         <dt>The word</dt><dd>Tracking is solved, not tasted. <code>0.007&nbsp;em</code> is the value that makes NTINODE measure exactly <code>2&thinsp;&times;&thinsp;L</code>; the build asserts it to within half a unit and fails if a glyph ever changes width.</dd>
         <dt>Fit</dt><dd>Four cubic segments per lobe, each carrying the sine's own tangent. Worst deviation from the true curve is 0.09% of amplitude — a tenth of the stroke, so it cannot be seen.</dd>
         <dt>The A</dt><dd>The opening lobe stands 1.38 caps tall and 2.15 caps wide, so it reads oversized among the letters rather than as one of them. The axis crosses it where an A's bar would sit.</dd>

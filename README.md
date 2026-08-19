@@ -30,16 +30,31 @@ photograph, the axis found from its ink profile, the lettering measured from its
 | stroke | ~3 px | 0.095 |
 
 The build asserts the word measures `2 × L` to within half a unit and fails if a glyph ever
-changes width. The wave, the axis and the letters share one pen because the pen *is* the
-typeface's stroke — `glyphs.W / glyphs.CAP`, not a number matched by eye.
+changes width.
+
+The weights were probed the same way — vertically through the crest, horizontally through the
+stems — and they are **not** all one pen. The pencil holds a clear hierarchy:
+
+| | on the photo | at cap 100 |
+|---|---|---|
+| the letters | 4 px | `9.43` |
+| the drawn lobe | 3 px | `6.98` |
+| the axis | 2–3 px | `6.22` |
+| the carried lobes | 1 px | `2.83` |
+| the × at the crest | heaviest | `11.87` |
+
+The name is the heaviest thing in the mark, the wave is a drawing behind it, and the carried part
+is a trace. Each weight is a ratio of the typeface's own stroke (`glyphs.W / glyphs.CAP`), so
+changing the face re-weights the whole mark. The carried lobes are thin rather than tinted —
+an opacity does not survive one-colour printing.
 
 | file | |
 |---|---|
-| `J-lockup` | **primary** — first lens solid, the carried two tinted, name on the axis |
+| `J-lockup` | **primary** — first lens at full weight, the carried two as hairlines, × at the crest |
+| `J-plain` | the same without the × |
 | `J-reflected` | plus the mirrored word below the axis, as the sketch draws it |
 | `J-dashed` | the carried lobes dashed instead of tinted |
-| `J-solid` | every lens at full ink — one colour, safe for single-ink reproduction |
-| `J-cross` | with the × you put at the crest |
+| `J-solid` | every lens at the wave's weight, no decay |
 | `J-mark` | the three-lens figure alone |
 | `J-stacked` | mark over word, widths aligned |
 | `J-icon` | one lens, redrawn at the small cut's weight (`-cross` adds the ×) |
