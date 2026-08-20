@@ -34,6 +34,7 @@ OUT = os.path.join(HERE, os.pardir, "logos")   # the deliverables
 TMP = os.path.join(HERE, "tmp")                # page-only, not a logo
 WORD = "ANTINODE"
 INK = "#141312"
+RUST = "#cf5b2e"   # the mark's ink in the two-colour cuts
 
 
 # ---------------------------------------------------------------- flattening
@@ -228,18 +229,31 @@ def svg(w, h, body, vx=0.0, vy=0.0):
     )
 
 
-def stroked(paths, dash=None, sw=None, opacity=None):
+def stroked(paths, dash=None, sw=None, opacity=None, cap="butt", color=None):
     sw = SW if sw is None else sw
     d = f' stroke-dasharray="{dash}"' if dash else ""
     o = f' stroke-opacity="{opacity}"' if opacity else ""
     return (
-        f'<g fill="none" stroke="{INK}" stroke-width="{sw}" stroke-linecap="butt" stroke-linejoin="miter"{d}{o}>\n'
+        f'<g fill="none" stroke="{color or INK}" stroke-width="{sw}" stroke-linecap="{cap}" '
+        f'stroke-linejoin="miter"{d}{o}>\n'
         + "\n".join(f'  <path d="{p}"/>' for p in paths)
         + "\n</g>"
     )
 
 
 # ---------------------------------------------------------- A-C: the wave
+def crest_mark(cx, cy, sw):
+    """The × you drew at the crest. One marker across every direction — C used
+    to carry a filled dot instead, which was mine and not on the paper.
+
+    Sized and weighted off the pen it sits on, in the ratios measured from the
+    sketch: about 0.11 of the lobe across, and 1.7× the line it marks."""
+    s = sw * 3.2
+    return (f'<g fill="none" stroke="{INK}" stroke-width="{sw * 1.7:.2f}" stroke-linecap="butt">'
+            f'<path d="M {cx - s:.1f} {cy - s:.1f} L {cx + s:.1f} {cy + s:.1f}"/>'
+            f'<path d="M {cx - s:.1f} {cy + s:.1f} L {cx + s:.1f} {cy - s:.1f}"/></g>')
+
+
 def vertical(wave_paths, wave_end, dashed=None, dot=False):
     """Wave on the axis, ANTINODE hanging off the same line. The string at
     rest is the type's baseline — one line doing both jobs."""
@@ -252,7 +266,7 @@ def vertical(wave_paths, wave_end, dashed=None, dot=False):
     if dashed:
         body.append(stroked(dashed, dash=f"{SW * 7:.2f} {SW * 5:.2f}"))
     if dot:
-        body.append(f'<circle cx="{A:.1f}" cy="{L / 2:.1f}" r="{SW * 1.9:.2f}"/>')
+        body.append(crest_mark(A, L / 2, SW))
     body.append(f'<path d="{path}"/>')
     pad = 40.0
     return svg(2 * A + 2 * pad, bottom - top + 2 * pad, "\n".join(body), -A - pad, top - pad)
@@ -263,7 +277,7 @@ def mark_body(paths, dashed=None, dot=False, left=True):
     if dashed:
         body.append(stroked(dashed, dash=f"{SW * 7:.2f} {SW * 5:.2f}"))
     if dot:
-        body.append(f'<circle cx="{A:.1f}" cy="{L / 2:.1f}" r="{SW * 1.9:.2f}"/>')
+        body.append(crest_mark(A, L / 2, SW))
     return body, (-A if left else -SW), A
 
 
@@ -294,7 +308,7 @@ def icon(paths, dot=False, left=True, extra=""):
     x0, x1 = (-A if left else -ICON_SW / 2), A
     body = [stroked([f"M 0 {-ICON_STUB:.1f} L 0 {L + ICON_STUB:.1f}"] + paths, sw=ICON_SW)]
     if dot:
-        body.append(f'<circle cx="{A:.1f}" cy="{L / 2:.1f}" r="{ICON_SW * 1.5:.2f}"/>')
+        body.append(crest_mark(A, L / 2, ICON_SW))
     if extra:
         body.append(extra)
     pad = 10.0
@@ -700,6 +714,121 @@ def jword(alt=()):
     return svg(ink + 2 * pad, JCAP + 2 * pad, f'<path d="{d}"/>', -pad, -(JCAP + pad))
 
 
+
+
+# ---------------------------------------------- K, C's idea at working weight
+# C's reading — one phase solid, the opposite ghosted, the antinode marked —
+# cut down to two lobes and drawn at the weight of the logo already in use.
+# The mark carries the punch so the word does not have to: it stays in the
+# face's own light weight, wide and tracked, which is the register the
+# reference films sit in and the reason the face exists.
+KCAP = 100.0
+KA = KCAP * 1.15                     # amplitude
+KL = KA * 2.0                        # half period — C's own lobe proportion
+KLOBES = 2                           # one full wavelength: one crest, one trough
+KSW = round(KA / 3.0, 2)             # the mark's pen, ~1/6 of its height
+# The ghost and the rule are hairlines on purpose. At the mark's own weight the
+# dashes collide with the solid phase at every node and the whole thing turns to
+# noise; thinned, they read as the diagram sitting behind a heavy mark.
+KGHOST = round(KSW * 0.32, 2)        # the opposite phase
+KRULE = round(KSW * 0.20, 2)         # the string at rest
+KDOT = round(KSW * 0.95, 2)          # radius. a sine's crest is flat, so a dot
+                                     # sized to the stroke barely shows past it
+KPEN = round(glyphs.W / glyphs.CAP * KCAP, 2)   # the word, unchanged and light
+KTRACK = 0.11                        # wide, but not so wide the word outruns the mark
+KGAP = KCAP * 1.15                   # mark to word
+KTAIL = KSW * 0.35
+KPAD = KSW * 1.10
+
+
+def kwave(lobes=KLOBES, ghost=True, rule=True, dots=True, colour=RUST, sw=None):
+    """One wavelength. The solid phase crests first, its opposite is ghosted
+    underneath it, and a dot sits on each antinode — the two points on a
+    standing wave that swing furthest from rest, which is the whole name."""
+    sw = KSW if sw is None else sw
+    body = []
+    if rule:
+        body.append(stroked([f"M {-KTAIL:.1f} 0 L {lobes * KL + KTAIL:.1f} 0"],
+                            sw=KRULE, cap="round", color=colour))
+    if ghost:
+        g = sine(KA, KL, lobes, horizontal=True)
+        body.append(stroked([g], sw=KGHOST, cap="round", color=colour,
+                            dash=f"{KGHOST * 2.6:.1f} {KGHOST * 2.3:.1f}"))
+    body.append(stroked([sine(KA, KL, lobes, mirror=True, horizontal=True)],
+                        sw=sw, cap="round", color=colour))
+    if dots:
+        for i in range(lobes):
+            cy = -KA if i % 2 == 0 else KA
+            body.append(f'<circle cx="{(i + 0.5) * KL:.1f}" cy="{cy:.1f}" '
+                        f'r="{KDOT:.2f}" fill="{colour}"/>')
+    return body
+
+
+def kmark(lobes=KLOBES, ghost=True, rule=True, colour=RUST, sw=None, pad=None):
+    pad = KPAD if pad is None else pad
+    sw = KSW if sw is None else sw
+    half = KA + sw / 2 + pad
+    left = KTAIL + pad if rule else sw / 2 + pad
+    return svg(lobes * KL + 2 * left, 2 * half,
+               "\n".join(kwave(lobes, ghost, rule, colour=colour, sw=sw)),
+               -left, -half)
+
+
+def klockup(ghost=True, rule=True, colour=RUST, ink=INK, alt=()):
+    """Mark left, name right, both centred on the axis — the arrangement the
+    logo already in use has, so it drops into the same slots."""
+    body = kwave(ghost=ghost, rule=rule, colour=colour)
+    x = KLOBES * KL + KGAP
+    d, wlen = setter.word(WORD, KCAP, KTRACK, x=x, y=KCAP / 2, alt=alt)
+    body.append(f'<path d="{d}" fill="{ink}"/>')
+    half = KA + KSW / 2 + KPAD
+    left = KTAIL + KPAD
+    return svg(x + wlen + left, 2 * half, "\n".join(body), -left, -half)
+
+
+def kstacked(ghost=True, rule=True, colour=RUST, ink=INK):
+    """Mark over name, the name set to the mark's own width."""
+    ink_w, off = setter.ink_width(WORD, KCAP, KTRACK)
+    scale = (KLOBES * KL) / ink_w
+    gap = KCAP * 0.90 * scale
+    body = kwave(ghost=ghost, rule=rule, colour=colour)
+    y = KA + KSW / 2 + gap + KCAP * scale
+    d, _ = setter.word(WORD, KCAP * scale, KTRACK, x=-off * scale, y=y)
+    body.append(f'<path d="{d}" fill="{ink}"/>')
+    half = KA + KSW / 2 + KPAD
+    left = KTAIL + KPAD
+    return svg(KLOBES * KL + 2 * left, half + y + KPAD, "\n".join(body), -left, -half)
+
+
+def kicon(colour=RUST):
+    """Redrawn for small sizes, and cropped to one antinode — the singular of
+    the name.
+
+    Two lobes make a 2:1 box that goes to a thread in a square slot, so the
+    icon takes one lobe and its opposite phase, which close into a lens that is
+    square by construction. The rule has to stay: a closed lens on its own
+    reads as a diamond at every weight, and it is the line through it that says
+    the thing is swinging about a rest position. The dashes and the dot come
+    off — a dash breaks up and a dot fuses with the crest long before the
+    curve gives out.
+    """
+    sw = round(KSW * 0.72, 2)
+    rule = round(sw * 0.42, 2)
+    over, pad = sw * 0.9, sw * 0.5
+    body = (stroked([f"M {-over:.1f} 0 L {KL + over:.1f} 0"], sw=rule, cap="round", color=colour)
+            + "\n" + stroked([closed_lens(KA, KL, horizontal=True)], sw=sw, color=colour))
+    half = KA + sw / 2 + pad
+    return svg(KL + 2 * over + 2 * pad, 2 * half, body, -(over + pad), -half)
+
+
+def kword(ink=INK, alt=()):
+    ink_w, off = setter.ink_width(WORD, KCAP, KTRACK, alt=alt)
+    d, _ = setter.word(WORD, KCAP, KTRACK, x=-off, y=0, alt=alt)
+    pad = KCAP * 0.30
+    return svg(ink_w + 2 * pad, KCAP + 2 * pad, f'<path d="{d}" fill="{ink}"/>',
+               -pad, -(KCAP + pad))
+
+
 files.update({
     "antinode-J-lockup.svg": lockup(),
     "antinode-J-solid.svg": lockup(decay=False),
@@ -715,6 +844,18 @@ files.update({
     "antinode-J-icon-cross.svg": jicon(),
     "antinode-J-word.svg": jword(),
     "antinode-J-word-alt.svg": jword(alt=(7,)),
+    # K — two colour by default, with a one-ink cut of everything alongside
+    "antinode-K-lockup.svg": klockup(),
+    "antinode-K-lockup-1c.svg": klockup(colour=INK),
+    "antinode-K-quiet.svg": klockup(ghost=False),
+    "antinode-K-bare.svg": klockup(ghost=False, rule=False),
+    "antinode-K-stacked.svg": kstacked(),
+    "antinode-K-stacked-1c.svg": kstacked(colour=INK),
+    "antinode-K-mark.svg": kmark(),
+    "antinode-K-mark-1c.svg": kmark(colour=INK),
+    "antinode-K-icon.svg": kicon(),
+    "antinode-K-icon-1c.svg": kicon(colour=INK),
+    "antinode-K-word.svg": kword(),
 })
 
 
@@ -763,4 +904,8 @@ if __name__ == "__main__":
           f"word {JINK:.0f} = {JINK / JL:.2f} L")
     print(f"       pens  letters {JPEN}  wave {JWAVE}  axis {JAXIS}  "
           f"carried {JCARRY}  cross {JXPEN}")
+    print(f"K      cap {KCAP:.0f}  lobe {KL:.0f} x {KA:.0f} (L/A {KL / KA:.2f})  "
+          f"mark {KLOBES * KL:.0f} x {2 * KA:.0f}")
+    print(f"       pens  mark {KSW}  ghost {KGHOST}  rule {KRULE}  dot r{KDOT}  "
+          f"word {KPEN}  ({KSW / KPEN:.2f}x the word)")
     print(f"{len(files)} files -> {OUT}")

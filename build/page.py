@@ -62,6 +62,23 @@ def group(title, blurb):
   </section>'''
 
 
+plate_k = plate("K", "Two antinodes, at working weight",
+    "C's reading — one phase solid, the opposite ghosted, the antinode marked — cut down to a "
+    "single wavelength and drawn at the weight of the logo already in use. One crest, one trough, "
+    "a dot on each: those two points are the only places on a standing wave that swing furthest "
+    "from rest, which is the whole name. The mark carries the punch so the name does not have to, "
+    "and stays in the face's own light weight — <strong>4&times;</strong> the difference. Two "
+    "colour by default; every cut also ships in one ink.",
+    single("K-lockup", "K-quiet", "K-stacked", tag="K"),
+    "The most flexible thing here by a distance. The mark splits off cleanly for a favicon or an "
+    "app tile, the lockup drops into the slot your current logo already occupies, and nothing in "
+    "it depends on the reader completing a letter.",
+    "The mark and the name are pulling in opposite directions on purpose — heavy against light — "
+    "and that only holds while they stay at these relative sizes. Shrink the lockup far enough "
+    "and the name thins out before the mark does; below about 120&nbsp;px wide, use the mark "
+    "alone.")
+
+
 plate_j = plate("J", "The drawing, whole",
     "The top sketch, rebuilt to its own measurements. Three lobes above the axis and three "
     "mirrored below — a standing wave drawn at both extremes of its swing, which makes three "
@@ -114,7 +131,11 @@ plates = [
           "Dashes break up long before hairlines do. Under roughly 80&nbsp;px it falls back to A's silhouette."),
 ]
 
-plates = [group("What you actually drew",
+plates = [group("Where it landed",
+                "Heavy mark, quiet name, two colours — C's idea at the weight and flexibility "
+                "of the logo already in use."),
+          plate_k,
+          group("What you actually drew",
                 "Three lobes, their mirrors, and the name inside them — measured off the "
                 "photograph and rebuilt, in a face cut for it."),
           plate_j,

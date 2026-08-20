@@ -8,8 +8,35 @@ photo and every mark are inlined, so it works from `file://` with nothing served
 
 ## What is here
 
-`logos/` holds the vector masters, black on transparent. **J** is set in Antinode, the face
-drawn for it (`font/`); everything else is Cormorant Garamond Light.
+`logos/` holds the vector masters. **J** and **K** are set in Antinode, the face drawn for them
+(`font/`); everything else is Cormorant Garamond Light.
+
+**K — two antinodes, at working weight.** C's reading — one phase solid, the opposite ghosted,
+the antinode marked — cut to a single wavelength and drawn at the weight of the logo already in
+use. One crest, one trough, a dot on each: those two points are the only places on a standing
+wave that swing furthest from rest, which is the whole name.
+
+The mark carries the punch so the name does not have to. The mark's pen is **4× the word's**,
+and the word stays in the face's own light weight, wide and tracked. Two colour by default —
+rust mark, ink name — with a one-ink cut (`-1c`) of everything alongside.
+
+Two things learned by building it, both worth keeping:
+
+- The ghost and the rule have to be **hairlines**. At the mark's own weight the dashes collide
+  with the solid phase at every node and the whole thing turns to noise.
+- A closed lens on its own **reads as a diamond** at every weight tried. It is the rule through
+  it that says the shape is swinging about a rest position — which is why the icon keeps the
+  axis and drops everything else.
+
+| file | |
+|---|---|
+| `K-lockup` | **primary** — mark left, name right, on one axis |
+| `K-quiet` | without the ghosted phase |
+| `K-bare` | without the ghost or the rule — closest to the logo in use |
+| `K-stacked` | mark over name, name set to the mark's width |
+| `K-mark` | the wave alone |
+| `K-icon` | one antinode, redrawn: lens plus rule, no dashes, no dot |
+| `K-word` | ANTINODE set plain |
 
 **J — the drawing, whole.** The top sketch rebuilt to its own measurements. Three lobes above the
 axis, three mirrored below — a standing wave at both extremes of its swing, which makes three lens

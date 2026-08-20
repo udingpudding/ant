@@ -50,7 +50,8 @@ for folder in (LOGOS, TMP, TYPE, SPEC):
         if not f.endswith(".svg"):
             continue
         s = open(os.path.join(folder, f)).read().strip()
-        s = s.replace("#141312", "currentColor").replace("#2d6b5f", "var(--rust)")
+        s = (s.replace("#141312", "currentColor").replace("#2d6b5f", "var(--rust)")
+             .replace("#cf5b2e", "var(--rust)"))
         s = re.sub(r'\swidth="[\d.]+"\sheight="[\d.]+"', "", s, count=1)
         key = f[:-4].replace("antinode-", "")
         if folder == TYPE:
