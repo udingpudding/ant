@@ -40,18 +40,13 @@ h1 em{font-style:italic;color:var(--rust)}
 .stage{display:flex;flex-direction:column;gap:1rem;min-width:0}
 .panel{background:var(--card);border:1px solid var(--rule);padding:clamp(1rem,2.6vw,2rem)}
 .panel h2{margin:0 0 1rem;font:600 .6875rem/1 var(--ar);letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
-.hero-stage{
-  display:grid;place-items:center;min-height:230px;overflow-x:auto;
-  background-image:
-    repeating-linear-gradient(to right,var(--grid) 0 1px,transparent 1px 44px),
-    repeating-linear-gradient(to bottom,var(--grid) 0 1px,transparent 1px 44px);
-}
-.hero-stage svg{display:block;width:100%;max-width:760px;height:auto}
-.hero-stage.col svg{width:auto;max-width:none;max-height:440px}
-.lock{display:flex;flex-direction:column;gap:.55rem}
-.lock+.lock{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--rule)}
-.lock .cap{font:600 .625rem/1.5 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
-.lock .cap b{color:var(--rust);font-weight:600}
+.hero-stage{display:flex;align-items:center;justify-content:flex-start;overflow-x:auto}
+.hero-stage svg{display:block;max-width:100%;height:auto}
+.lock{display:flex;flex-direction:column;gap:.6rem}
+.lock+.lock{margin-top:1.6rem;padding-top:1.6rem;border-top:1px solid var(--rule)}
+.lock .cap{display:flex;align-items:baseline;gap:.7rem;
+  font:600 .625rem/1.5 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.lock .cap b{flex:none;min-width:1.1em;color:var(--rust);font-weight:600;font-size:.75rem}
 .row{display:flex;align-items:flex-end;gap:clamp(1rem,3vw,2.4rem);flex-wrap:wrap}
 .spec{display:flex;flex-direction:column;align-items:flex-start;gap:.5rem}
 .spec svg{display:block;height:auto}
@@ -60,11 +55,12 @@ h1 em{font-style:italic;color:var(--rust)}
 .icons .spec{align-items:center}
 
 /* ---- controls ---- */
-.rail{display:flex;flex-direction:column;gap:.75rem;position:sticky;top:1rem}
-@media (max-width:960px){.rail{position:static}}
-fieldset{margin:0;padding:1.1rem 1.2rem 1.3rem;background:var(--card);border:1px solid var(--rule)}
+.rail{display:flex;flex-direction:column;gap:.7rem;position:sticky;top:1rem;
+  max-height:calc(100vh - 2rem);overflow-y:auto;scrollbar-width:thin;padding-right:.35rem}
+@media (max-width:960px){.rail{position:static;max-height:none;overflow:visible;padding-right:0}}
+fieldset{margin:0;padding:.9rem 1.1rem 1.1rem;background:var(--card);border:1px solid var(--rule)}
 legend{padding:0 .5rem;margin-left:-.5rem;font:600 .6875rem/1 var(--ar);letter-spacing:.18em;text-transform:uppercase;color:var(--rust)}
-.ctl{display:grid;grid-template-columns:1fr auto;gap:.25rem .6rem;align-items:baseline;padding:.55rem 0}
+.ctl{display:grid;grid-template-columns:1fr auto;gap:.2rem .6rem;align-items:baseline;padding:.5rem 0}
 .ctl+.ctl{border-top:1px solid var(--rule)}
 .ctl label{font:400 .8125rem/1.3 var(--ink)}
 .ctl .val{font:600 .8125rem/1.3 var(--mono);color:var(--rust);font-variant-numeric:tabular-nums}
@@ -84,8 +80,7 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
 .presets button.on{background:var(--rust);border-color:var(--rust);color:var(--bone)}
 
 /* ---- readout ---- */
-.readout{margin-top:1rem}
-.readout pre{margin:0;overflow-x:auto;background:var(--card);border:1px solid var(--rule);
+.readout pre{margin:0;overflow-x:auto;background:var(--bone);border:1px solid var(--rule);
   padding:1rem 1.1rem;font:400 .8125rem/1.75 var(--mono);color:var(--ink);font-variant-numeric:tabular-nums}
 .readout .k{color:var(--rust)}
 .note{margin:.7rem 0 0;font-size:.8125rem;line-height:1.6;color:var(--muted);max-width:70ch}
@@ -94,10 +89,11 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
 
 <div class="wrap">
 <header>
-  <p class="eyebrow">Antinode &middot; direction K</p>
+  <p class="eyebrow">Antinode &middot; directions K, L, M</p>
   <h1>Dial the weight.<br><em>Then tell me the number.</em></h1>
   <p class="lede">Three lockups off one set of numbers, so they can only be compared at the same
-    weight. Every control is live; the block at the bottom prints the exact constants for
+    weight, and all three draw at one scale so the same pen is the same pen. Every control is
+    live; the block below prints the exact constants for
     <code>build&#8209;antinode.py</code> &mdash; read them off and I&rsquo;ll cut the masters to
     match, no screenshots either way.</p>
 </header>
@@ -107,15 +103,15 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
     <div class="panel">
       <h2>Three lockups, one set of controls</h2>
       <div class="lock">
-        <span class="cap"><b>K</b> &nbsp;mark, then word &mdash; the two sit apart</span>
+        <span class="cap"><b>K</b> Mark, then word &mdash; the two sit apart</span>
         <div class="hero-stage" id="hero-K"></div>
       </div>
       <div class="lock">
-        <span class="cap"><b>L</b> &nbsp;C&rsquo;s reading &mdash; the axis runs on and becomes the baseline</span>
+        <span class="cap"><b>L</b> C&rsquo;s reading &mdash; the axis runs on and becomes the baseline</span>
         <div class="hero-stage" id="hero-L"></div>
       </div>
       <div class="lock">
-        <span class="cap"><b>M</b> &nbsp;H&rsquo;s reading &mdash; the opening lobe stands in the A&rsquo;s slot</span>
+        <span class="cap"><b>M</b> H&rsquo;s reading &mdash; the opening lobe stands in the A&rsquo;s slot</span>
         <div class="hero-stage" id="hero-M"></div>
       </div>
     </div>
@@ -127,6 +123,14 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
     <div class="panel">
       <h2>Icon &mdash; one antinode, redrawn</h2>
       <div class="icons" id="icons"></div>
+    </div>
+    <div class="panel readout">
+      <h2>The numbers</h2>
+      <pre id="out"></pre>
+      <p class="note">The word never changes weight &mdash; it stays at Antinode&rsquo;s own
+        <span style="font-family:var(--mono)">9.43</span> at cap&nbsp;100, the light half of the
+        pair you chose. <strong>Mark &divide; word</strong> is the number that decides whether the
+        contrast reads as deliberate or as a mistake; what shipped was 4.06&times;.</p>
     </div>
   </div>
 
@@ -142,6 +146,7 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
         <label for="gh">Ghost phase</label><span class="val" id="gh-v"></span>
         <input type="range" id="gh" min="0" max="1" step="0.02">
         <span class="sub" id="gh-s"></span>
+        <div class="presets" id="gstyle" style="grid-column:1/-1;margin-top:.5rem"></div>
       </div>
       <div class="ctl">
         <label for="ru">Rule</label><span class="val" id="ru-v"></span>
@@ -153,9 +158,8 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
     <fieldset>
       <legend>Lockup L</legend>
       <div class="ctl" style="padding-top:0">
-        <span class="sub" style="margin-bottom:.5rem">The rule does not stop at the wave &mdash;
-          it carries on under the word, so one line does both jobs. Column is the same drawing
-          stood up: the tall lockup this family has never had.</span>
+        <span class="sub" style="margin-bottom:.5rem">The rule runs on under the word, so one
+          line does both jobs. Column is that drawing stood up.</span>
       </div>
       <div class="presets" id="orient"></div>
     </fieldset>
@@ -163,9 +167,9 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
     <fieldset>
       <legend>Lockup M</legend>
       <div class="ctl" style="padding-top:0">
-        <span class="sub" style="margin-bottom:.5rem">Legs carry the lobe past the node, so the
-          rule crosses it where an A&rsquo;s bar goes instead of just touching its feet. At 0 the
-          arch stands on the line and reads as the face&rsquo;s N.</span>
+        <span class="sub" style="margin-bottom:.5rem">Legs carry the lobe past the node so the
+          rule crosses it where an A&rsquo;s bar goes. At 0 it stands on the line and reads as
+          the face&rsquo;s N.</span>
       </div>
       <div class="presets" id="carry"></div>
       <div class="ctl">
@@ -178,9 +182,8 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
     <fieldset>
       <legend>Antinode</legend>
       <div class="ctl" style="padding-top:0">
-        <span class="sub" style="margin-bottom:.5rem">The &times; is not a drawn sign &mdash; it
-          is the two phases crossing at a node, cut out and carried up to the antinode, so it
-          keeps the wave&rsquo;s own curve and its own angle.</span>
+        <span class="sub" style="margin-bottom:.5rem">The &times; is the two phases crossing at
+          a node, carried up to the antinode &mdash; the wave&rsquo;s own curve and angle.</span>
       </div>
       <div class="presets" id="mark"></div>
       <div class="toggles" style="margin-top:.75rem">
@@ -258,13 +261,6 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
   </div>
 </div>
 
-<div class="readout">
-  <pre id="out"></pre>
-  <p class="note">The word never changes weight &mdash; it stays at Antinode&rsquo;s own
-    <span style="font-family:var(--mono)">9.43</span> at cap&nbsp;100, which is the light half of
-    the pair you chose. <strong>Mark &divide; word</strong> is the number that decides whether the
-    contrast reads as deliberate or as a mistake; what shipped was 4.06&times;.</p>
-</div>
 </div>
 
 <script>
@@ -276,12 +272,13 @@ const CURVES = [["2.5","An25","round"],["3.2","An32","softened"],
 const MARKS   = [["Dot","dot"],["Cross","cross"]];
 const ORIENTS = [["Line","line"],["Column","column"]];
 const CARRY   = [["Full","full"],["Under the A","short"]];
+const GHOSTS  = [["Dashed","dash"],["Dotted","dot"]];
 const DIRS    = ["K","L","M"];
 
 const P = {curve:"An40", w:0.155, gh:0.32, ru:0.20, dt:0.95, xp:0.45, xa:1.40,
            amp:1.00, lob:2.00, tr:0.11, gap:1.15,
            mark:"dot", crest:true, trough:true, ghost:true, rule:true, oneink:false,
-           orient:"line", dir:"K", carry:"full", leg:0.14};
+           orient:"line", dir:"K", carry:"full", leg:0.14, gstyle:"dash"};
 
 const PRESETS = {
   "Hairline": {w:0.055, gh:0.55, ru:0.34, dt:1.30, amp:1.05, lob:2.00},
@@ -339,7 +336,9 @@ const newSvg = () => el("svg", {xmlns:"http://www.w3.org/2000/svg", fill:"none"}
 const stroke = (d, sw, mk, dash) => el("path", Object.assign(
   {d, stroke:mk, "stroke-width":sw, "stroke-linecap":"round"},
   dash ? {"stroke-dasharray":dash} : {}));
-const dashOf = g => `${(g.ghost*2.6).toFixed(1)} ${(g.ghost*2.3).toFixed(1)}`;
+const dashOf = g => P.gstyle === "dot"
+  ? `0 ${(g.ghost * 2.15).toFixed(2)}`
+  : `${(g.ghost*2.6).toFixed(1)} ${(g.ghost*2.3).toFixed(1)}`;
 
 function geom(){
   const A = CAP * P.amp, L = A * P.lob, sw = A * P.w;
@@ -484,17 +483,23 @@ function buildIcon(){
 function render(){
   const g = geom();
 
-  for (const k of DIRS){
+  // Build all three, then draw them at one scale: three lockups sized to fill
+  // three different boxes is three different apparent weights, which is exactly
+  // the comparison the bench exists to make.
+  const shown = DIRS.map(k => {
     const host = document.getElementById("hero-" + k);
     host.textContent = "";
-    host.classList.toggle("col", k === "L" && P.orient === "column");
     const {svg, fit} = BUILD[k]();
     host.appendChild(svg);
-    const b = fit();
-    if (b.h > b.w){                      // a column is sized off its height
-      svg.style.height = "440px";
-      svg.style.width = (440 * b.w / b.h).toFixed(1) + "px";
-    }
+    return {k, host, svg, b: fit()};
+  });
+  const COLH = 440;
+  const wide = shown.filter(o => o.b.w >= o.b.h);
+  const scale = Math.min(...wide.map(o => (o.host.clientWidth || 900) / o.b.w));
+  for (const o of shown){
+    const s = (o.b.w >= o.b.h) ? scale : COLH / o.b.h;
+    o.svg.style.width = (o.b.w * s).toFixed(1) + "px";
+    o.svg.style.height = (o.b.h * s).toFixed(1) + "px";
   }
 
   const sizes = document.getElementById("sizes");
@@ -532,7 +537,9 @@ function render(){
     document.getElementById(id + "-s").textContent = sub;
   };
   set("w", n(g.sw), `${P.w.toFixed(3)} × amplitude · ${(g.sw/WORD_PEN).toFixed(2)}× the word`);
-  set("gh", n(g.ghost), `${P.gh.toFixed(2)} × mark pen`);
+  set("gh", n(g.ghost), `${P.gh.toFixed(2)} × mark pen · ${P.gstyle === "dot"
+      ? `dots ${n(g.ghost)} across, ${n(g.ghost*2.15)} apart`
+      : `dashes ${n(g.ghost*2.6)} / ${n(g.ghost*2.3)}`}`);
   set("ru", n(g.rule), `${P.ru.toFixed(2)} × mark pen`);
   set("dt", P.mark === "dot" ? n(g.dot) : n(2*g.xr),
       P.mark === "dot" ? `radius · ${(g.dot*2/g.sw).toFixed(2)}× the stroke across`
@@ -557,6 +564,9 @@ function render(){
 <span class="k">KL</span>     = KA * ${P.lob.toFixed(2)}
 <span class="k">KSW</span>    = round(KA * ${P.w.toFixed(3)}, 2)      # ${n(g.sw)} — ${(g.sw/WORD_PEN).toFixed(2)}x the word
 <span class="k">KGHOST</span> = round(KSW * ${P.gh.toFixed(2)}, 2)
+<span class="k">KGDASH</span> = ${P.gstyle === "dot"
+  ? `(0, KGHOST * 2.15)      # dotted: a round cap on a zero-length dash`
+  : `(KGHOST * 2.6, KGHOST * 2.3)`}
 <span class="k">KRULE</span>  = round(KSW * ${P.ru.toFixed(2)}, 2)
 <span class="k">KMARK</span>  = ${JSON.stringify(P.mark)}${where}
 ${P.mark === "dot"
@@ -604,6 +614,7 @@ function switcher(host, items, key){
 switcher("mark", MARKS, "mark");
 switcher("orient", ORIENTS, "orient");
 switcher("carry", CARRY, "carry");
+switcher("gstyle", GHOSTS, "gstyle");
 switcher("which", DIRS.map(d => [d, d]), "dir");
 switcher("curve", CURVES.map(([label, fam, word]) => [label + " · " + word, fam]), "curve");
 
