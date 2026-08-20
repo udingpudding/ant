@@ -10,8 +10,8 @@ its bar.
 Every glyph is a skeleton inflated by one pen. Nothing here is a filled shape.
 """
 import math
-from geom import (Contour, stroke_line, stroke_curve, ring, ellipse,
-                  superellipse_pts, arc_pts)
+from geom import (Contour, stroke_line, stroke_curve, stroke_closed, ring,
+                  ellipse, superellipse_pts, arc_pts)
 
 # ---------------------------------------------------------------- metrics
 UPEM = 1000
@@ -86,17 +86,35 @@ def bowl(x, y_top, y_bot, width):
     return curve(superellipse_pts(x, cy, width, b, ARCH_N, math.pi / 2, -math.pi / 2))
 
 
+def se_pts(cx, cy, a, b, t0=0.0, t1=2 * math.pi, steps=600):
+    """The face's curve, at any size and any sweep."""
+    return superellipse_pts(cx, cy, a, b, ARCH_N, t0, t1, steps)
+
+
+def sering(cx=None, cy=None, rx=None, ry=None, w=None):
+    """The O and its family. Built on the same superellipse as the N's shoulder
+    and the D's bowl — a circle here would read as a visitor from another
+    alphabet, which is exactly what it did before."""
+    cx = XM if cx is None else cx
+    cy = CAP / 2 if cy is None else cy
+    rx = AX if rx is None else rx
+    ry = (CAP / 2 + OVER - W / 2) if ry is None else ry
+    o, i, e = stroke_closed(se_pts(cx, cy, rx, ry), W if w is None else w, 28)
+    _err.append(e)
+    return [o, i]
+
+
 def ORING(rx=None, ry=None):
-    return ring(XM, CAP / 2, AX if rx is None else rx,
-                (CAP / 2 + OVER - W / 2) if ry is None else ry, W)
+    return sering(rx=rx, ry=ry)
 
 
 def cring(a0, a1, rx=None, ry=None, cx=None, cy=None):
-    """An open ring — C, G, S, and the digits' bowls."""
-    return curve(arc_pts(XM if cx is None else cx, CAP / 2 if cy is None else cy,
-                         AX if rx is None else rx,
-                         (CAP / 2 + OVER - W / 2) if ry is None else ry,
-                         math.radians(a0), math.radians(a1)))
+    """An open ring — C, G, S, the E, and the digits' bowls."""
+    return curve(se_pts(XM if cx is None else cx,
+                        CAP / 2 if cy is None else cy,
+                        AX if rx is None else rx,
+                        (CAP / 2 + OVER - W / 2) if ry is None else ry,
+                        math.radians(a0), math.radians(a1)))
 
 
 def rad(d):
@@ -139,12 +157,13 @@ def g_E():
     middle arm that stops short of the bowl's widest point so all three
     right-hand ends line up on one vertical.
 
-    That alignment is what makes it read as an E rather than a euro sign, and
-    the opening is what keeps it off a theta — which a closed bowl reads as at
-    every weight tried.
+    Drawn on the face's own superellipse, not a circle — the same curve as the
+    N's shoulder and the D's bowl, so it belongs to the alphabet rather than
+    visiting from another one.
     """
-    t = math.cos(rad(E_OPEN))
-    return cring(E_OPEN, 360 - E_OPEN) + hbar(MIDY, XM - AX, XM + AX * t)
+    t = rad(E_OPEN)
+    ex = math.copysign(abs(math.cos(t)) ** (2 / ARCH_N), math.cos(t))
+    return cring(E_OPEN, 360 - E_OPEN) + hbar(MIDY, XM - AX, XM + AX * ex)
 
 
 def g_Ealt():
@@ -213,8 +232,8 @@ def g_S():
     ry = (CAP / 2 + OVER - W / 2) / 2
     rx = AX
     up, lo = CAP / 2 + ry, CAP / 2 - ry
-    top = arc_pts(XM, up, rx, ry, rad(35), rad(270))
-    bot = arc_pts(XM, lo, rx, ry, rad(90), rad(-145))
+    top = se_pts(XM, up, rx, ry, rad(35), rad(270))
+    bot = se_pts(XM, lo, rx, ry, rad(90), rad(-145))
     return curve(top) + curve(bot)
 
 
@@ -248,7 +267,7 @@ def g_Z():
 
 # ---------------------------------------------------------------- digits
 def g_zero():
-    return ring(XM, CAP / 2, AX * 0.82, CAP / 2 + OVER - W / 2, W)
+    return sering(XM, CAP / 2, AX * 0.82)
 
 
 def g_one():
@@ -261,7 +280,7 @@ def g_two():
     end = rad(-28)
     px = XM + AX * math.cos(end)
     py = cy + (r - W / 2) * math.sin(end)
-    return (curve(arc_pts(XM, cy, AX, r - W / 2, rad(192), end))
+    return (curve(se_pts(XM, cy, AX, r - W / 2, rad(192), end))
             + seg((px, py), (XL, YB)) + hbar(YB, L, R))
 
 
@@ -279,16 +298,16 @@ def g_four():
 def g_five():
     cy, ry = 0.29 * CAP, 0.29 * CAP - W / 2 + OVER
     return (hbar(YT, XL, R) + vstem(XL, cy + ry * math.sin(rad(150)), CAP)
-            + curve(arc_pts(XM, cy, AX, ry, rad(150), rad(-150))))
+            + curve(se_pts(XM, cy, AX, ry, rad(150), rad(-150))))
 
 
 def g_six():
     # a closed lower bowl, and one stroke that leaves its left flank and rises
     rb = 0.31 * CAP
     ry = rb - W / 2 + OVER
-    return (ring(XM, rb, AX, ry, W)
-            + curve(arc_pts(XM + AX * 0.62, rb, AX * 1.62, CAP - W / 2 - rb,
-                            rad(180), rad(90))))
+    return (sering(XM, rb, AX, ry)
+            + curve(se_pts(XM + AX * 0.62, rb, AX * 1.62, CAP - W / 2 - rb,
+                           rad(180), rad(90))))
 
 
 def g_seven():
@@ -297,8 +316,8 @@ def g_seven():
 
 def g_eight():
     r = 0.27 * CAP
-    return (ring(XM, CAP - r - OVER / 2, AX * 0.84, r - W / 2, W)
-            + ring(XM, r + OVER / 2, AX, CAP / 2 - r - W / 2 + OVER, W))
+    return (sering(XM, CAP - r - OVER / 2, AX * 0.84, r - W / 2)
+            + sering(XM, r + OVER / 2, AX, CAP / 2 - r - W / 2 + OVER))
 
 
 def g_nine():
@@ -347,8 +366,8 @@ def g_slash():
 
 
 def g_parenleft():
-    return curve(arc_pts(XM + GW * 0.30, CAP * 0.42, GW * 0.42, CAP * 0.66,
-                         rad(140), rad(220)))
+    return curve(se_pts(XM + GW * 0.30, CAP * 0.42, GW * 0.42, CAP * 0.66,
+                        rad(140), rad(220)))
 
 
 def g_parenright():
@@ -372,16 +391,16 @@ def g_question():
     # own circle where the tangent is horizontal and x is back at the centre
     r = AX * 0.86
     cy = CAP - r - OVER
-    return (curve(arc_pts(XM, cy, r, r, rad(200), rad(-80)))
+    return (curve(se_pts(XM, cy, r, r, rad(200), rad(-80)))
             + vstem(XM, CAP * 0.26, cy - r * 0.98) + _dot(XM, W / 2))
 
 
 def g_ampersand():
     """Kept geometric: a small upper loop, a wide lower loop, one tail."""
     rt = AX * 0.52
-    return (curve(arc_pts(XM - AX * 0.34, CAP - rt - OVER, rt, rt, rad(-60), rad(240)))
-            + curve(arc_pts(XM - AX * 0.14, rt * 1.15, rt * 1.15, rt * 1.15,
-                            rad(30), rad(330)))
+    return (curve(se_pts(XM - AX * 0.34, CAP - rt - OVER, rt, rt, rad(-60), rad(240)))
+            + curve(se_pts(XM - AX * 0.14, rt * 1.15, rt * 1.15, rt * 1.15,
+                           rad(30), rad(330)))
             + seg((XM - AX * 0.34 - rt * 0.5, CAP - rt * 1.5), (XR, YB)))
 
 

@@ -179,6 +179,65 @@ def offset_poly(pts, d):
     return out
 
 
+def offset_closed(pts, d):
+    """Miter offset for a closed polyline (pts[0] == pts[-1]). Every vertex
+    gets a bisector, including the seam, so a ring has no notch where it
+    started."""
+    p = pts[:-1]
+    n = len(p)
+    segn = []
+    for i in range(n):
+        a, b = p[i], p[(i + 1) % n]
+        t = _unit((b[0] - a[0], b[1] - a[1]))
+        segn.append((-t[1], t[0]))
+    out = []
+    for i in range(n):
+        u, v = segn[(i - 1) % n], segn[i]
+        bx, by = _unit((u[0] + v[0], u[1] + v[1]))
+        cos_half = bx * u[0] + by * u[1]
+        s = 1.0 / cos_half if abs(cos_half) > 0.2 else 5.0
+        out.append((p[i][0] + bx * d * s, p[i][1] + by * d * s))
+    out.append(out[0])
+    return out
+
+
+def _poly_area(p):
+    return sum(p[i][0] * p[i + 1][1] - p[i + 1][0] * p[i][1]
+               for i in range(len(p) - 1)) / 2
+
+
+def catmull_closed(pts):
+    """Polyline -> closed C1 cubic loop. Neighbours wrap, so the seam carries
+    the same tangent as everywhere else."""
+    p = pts[:-1]
+    n = len(p)
+    c = Contour(p[0])
+    for i in range(n):
+        p0, p1, p2, p3 = p[(i - 1) % n], p[i], p[(i + 1) % n], p[(i + 2) % n]
+        c1 = (p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6)
+        c2 = (p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6)
+        c.curve(c1, c2, p2)
+    return c             # the last curve already lands back on the start
+
+
+def stroke_closed(pts, w, segments=28):
+    """A closed skeleton inflated to width w. Returns (outer, inner, error);
+    the inner contour is flagged a hole, so the counter is a real hole and not
+    two overlapping shapes."""
+    dense = resample(pts, 600)
+    dense[-1] = dense[0]
+    # which side is "out" depends on the skeleton's winding, so pick by area
+    # rather than by sign and the caller never has to care
+    o1, o2 = offset_closed(dense, w / 2), offset_closed(dense, -w / 2)
+    a_d, b_d = (o1, o2) if abs(_poly_area(o1)) > abs(_poly_area(o2)) else (o2, o1)
+    a_f = resample_turn(a_d, segments); a_f[-1] = a_f[0]
+    b_f = resample_turn(b_d, segments); b_f[-1] = b_f[0]
+    outer, inner = catmull_closed(a_f), catmull_closed(b_f)
+    err = max(fit_error(outer, a_d), fit_error(inner, b_d))
+    inner.hole = True
+    return outer.wind(True), inner.wind(False), err
+
+
 def catmull(pts):
     """Polyline -> C1 cubic chain. Tangent at P[i] is (P[i+1]-P[i-1])/2, so the
     handles are a sixth of the neighbouring chord — a Catmull-Rom spline
