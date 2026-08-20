@@ -1,0 +1,367 @@
+<title>Antinode Mark Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;0,800;1,800&display=swap">
+<style>
+@font-face{font-family:"Antinode";font-weight:400;font-style:normal;font-display:block;
+  src:url(data:font/woff2;base64,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) format("woff2");}
+
+/* One committed light world — the project has no dark mode on purpose, so every
+   colour is painted explicitly rather than inherited from the host. */
+:root{
+  --bone:#f0ede7; --card:#f8f6f2; --ink:#17150f; --rust:#cf5b2e;
+  --grid:#e4dfd4; --rule:#dbd5c8; --muted:#6f6a5e; --track:#ded8cb;
+  --ar:"Archivo","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bone);color:var(--ink);
+  font:400 16px/1.6 var(--ar);-webkit-font-smoothing:antialiased;
+  background-image:
+    repeating-linear-gradient(to right,var(--grid) 0 1px,transparent 1px 110px),
+    repeating-linear-gradient(to bottom,var(--grid) 0 1px,transparent 1px 110px);
+}
+.wrap{max-width:1440px;margin-inline:auto;padding:clamp(1.6rem,4vw,3.4rem) clamp(1.1rem,3vw,2.6rem) 4rem}
+
+header{display:flex;flex-direction:column;gap:.7rem;margin-bottom:2rem}
+.eyebrow{margin:0;font:600 .75rem/1 var(--ar);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+h1{margin:0;font:800 clamp(2rem,5vw,3.4rem)/1 var(--ar);letter-spacing:-.03em;text-wrap:balance}
+h1 em{font-style:italic;color:var(--rust)}
+.lede{margin:0;max-width:56ch;color:var(--muted);font-size:.95rem;line-height:1.65}
+
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:clamp(1rem,2.4vw,2rem);align-items:start}
+@media (max-width:960px){.bench{grid-template-columns:minmax(0,1fr)}}
+
+/* ---- stage ---- */
+.stage{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.panel{background:var(--card);border:1px solid var(--rule);padding:clamp(1rem,2.6vw,2rem)}
+.panel h2{margin:0 0 1rem;font:600 .6875rem/1 var(--ar);letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.hero-stage{
+  display:grid;place-items:center;min-height:230px;overflow-x:auto;
+  background-image:
+    repeating-linear-gradient(to right,var(--grid) 0 1px,transparent 1px 44px),
+    repeating-linear-gradient(to bottom,var(--grid) 0 1px,transparent 1px 44px);
+}
+.hero-stage svg{display:block;width:100%;max-width:760px;height:auto}
+.row{display:flex;align-items:flex-end;gap:clamp(1rem,3vw,2.4rem);flex-wrap:wrap}
+.spec{display:flex;flex-direction:column;align-items:flex-start;gap:.5rem}
+.spec svg{display:block;height:auto}
+.spec span{font:600 .625rem/1 var(--mono);color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.06em}
+.icons{display:flex;align-items:flex-end;gap:clamp(.9rem,2.6vw,2rem);flex-wrap:wrap}
+.icons .spec{align-items:center}
+
+/* ---- controls ---- */
+.rail{display:flex;flex-direction:column;gap:.75rem;position:sticky;top:1rem}
+@media (max-width:960px){.rail{position:static}}
+fieldset{margin:0;padding:1.1rem 1.2rem 1.3rem;background:var(--card);border:1px solid var(--rule)}
+legend{padding:0 .5rem;margin-left:-.5rem;font:600 .6875rem/1 var(--ar);letter-spacing:.18em;text-transform:uppercase;color:var(--rust)}
+.ctl{display:grid;grid-template-columns:1fr auto;gap:.25rem .6rem;align-items:baseline;padding:.55rem 0}
+.ctl+.ctl{border-top:1px solid var(--rule)}
+.ctl label{font:400 .8125rem/1.3 var(--ink)}
+.ctl .val{font:600 .8125rem/1.3 var(--mono);color:var(--rust);font-variant-numeric:tabular-nums}
+.ctl .sub{grid-column:1/-1;font:400 .6875rem/1.4 var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.ctl input[type=range]{grid-column:1/-1;width:100%;margin:.35rem 0 0;accent-color:var(--rust);background:transparent}
+input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-visible{outline:2px solid var(--rust);outline-offset:3px}
+
+.toggles{display:flex;flex-wrap:wrap;gap:.5rem}
+.tog{display:inline-flex;align-items:center;gap:.4rem;font:400 .8125rem/1 var(--ink);
+  border:1px solid var(--rule);background:var(--bone);padding:.5rem .65rem;cursor:pointer}
+.tog input{accent-color:var(--rust);margin:0}
+.presets{display:flex;flex-wrap:wrap;gap:.4rem}
+.presets button{font:600 .6875rem/1 var(--ar);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink);background:var(--bone);border:1px solid var(--rule);padding:.55rem .6rem;cursor:pointer}
+.presets button:hover{border-color:var(--rust);color:var(--rust)}
+.presets button.warn{color:var(--muted)}
+
+/* ---- readout ---- */
+.readout{margin-top:1rem}
+.readout pre{margin:0;overflow-x:auto;background:var(--card);border:1px solid var(--rule);
+  padding:1rem 1.1rem;font:400 .8125rem/1.75 var(--mono);color:var(--ink);font-variant-numeric:tabular-nums}
+.readout .k{color:var(--rust)}
+.note{margin:.7rem 0 0;font-size:.8125rem;line-height:1.6;color:var(--muted);max-width:70ch}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <p class="eyebrow">Antinode &middot; direction K</p>
+  <h1>Dial the weight.<br><em>Then tell me the number.</em></h1>
+  <p class="lede">Every control is live. The block at the bottom prints the exact constants for
+    <code>build&#8209;antinode.py</code> &mdash; read them off and I&rsquo;ll cut the masters to
+    match, no screenshots either way.</p>
+</header>
+
+<div class="bench">
+  <div class="stage">
+    <div class="panel">
+      <h2>Lockup</h2>
+      <div class="hero-stage" id="hero"></div>
+    </div>
+    <div class="panel">
+      <h2>At the sizes it has to survive</h2>
+      <div class="row" id="sizes"></div>
+    </div>
+    <div class="panel">
+      <h2>Icon &mdash; one antinode, redrawn</h2>
+      <div class="icons" id="icons"></div>
+    </div>
+  </div>
+
+  <div class="rail">
+    <fieldset>
+      <legend>Weight</legend>
+      <div class="ctl">
+        <label for="w">Mark pen</label><span class="val" id="w-v"></span>
+        <input type="range" id="w" min="0.04" max="0.36" step="0.005">
+        <span class="sub" id="w-s"></span>
+      </div>
+      <div class="ctl">
+        <label for="gh">Ghost phase</label><span class="val" id="gh-v"></span>
+        <input type="range" id="gh" min="0" max="1" step="0.02">
+        <span class="sub" id="gh-s"></span>
+      </div>
+      <div class="ctl">
+        <label for="ru">Rule</label><span class="val" id="ru-v"></span>
+        <input type="range" id="ru" min="0" max="0.7" step="0.02">
+        <span class="sub" id="ru-s"></span>
+      </div>
+      <div class="ctl">
+        <label for="dt">Antinode dot</label><span class="val" id="dt-v"></span>
+        <input type="range" id="dt" min="0" max="1.8" step="0.05">
+        <span class="sub" id="dt-s"></span>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Shape</legend>
+      <div class="ctl">
+        <label for="amp">Mark height</label><span class="val" id="amp-v"></span>
+        <input type="range" id="amp" min="0.5" max="1.8" step="0.025">
+        <span class="sub" id="amp-s"></span>
+      </div>
+      <div class="ctl">
+        <label for="lob">Lobe, wide &divide; tall</label><span class="val" id="lob-v"></span>
+        <input type="range" id="lob" min="1.1" max="3.2" step="0.05">
+        <span class="sub" id="lob-s"></span>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Name</legend>
+      <div class="ctl">
+        <label for="tr">Tracking</label><span class="val" id="tr-v"></span>
+        <input type="range" id="tr" min="0" max="0.32" step="0.005">
+        <span class="sub" id="tr-s"></span>
+      </div>
+      <div class="ctl">
+        <label for="gap">Gap to mark</label><span class="val" id="gap-v"></span>
+        <input type="range" id="gap" min="0.3" max="2.2" step="0.05">
+        <span class="sub" id="gap-s"></span>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Show</legend>
+      <div class="toggles">
+        <label class="tog"><input type="checkbox" id="t-ghost" checked> Ghost</label>
+        <label class="tog"><input type="checkbox" id="t-rule" checked> Rule</label>
+        <label class="tog"><input type="checkbox" id="t-dots" checked> Dots</label>
+        <label class="tog"><input type="checkbox" id="t-1c"> One ink</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Jump to</legend>
+      <div class="presets" id="presets"></div>
+    </fieldset>
+  </div>
+</div>
+
+<div class="readout">
+  <pre id="out"></pre>
+  <p class="note">The word never changes weight &mdash; it stays at Antinode&rsquo;s own
+    <span style="font-family:var(--mono)">9.43</span> at cap&nbsp;100, which is the light half of
+    the pair you chose. <strong>Mark &divide; word</strong> is the number that decides whether the
+    contrast reads as deliberate or as a mistake; what shipped was 4.06&times;.</p>
+</div>
+</div>
+
+<script>
+const WORD_PEN = 9.43, CAP = 100;
+
+const P = {w:0.155, gh:0.32, ru:0.20, dt:0.95, amp:1.00, lob:2.00, tr:0.11, gap:1.15,
+           ghost:true, rule:true, dots:true, oneink:false};
+
+const PRESETS = {
+  "Hairline": {w:0.055, gh:0.55, ru:0.34, dt:1.30, amp:1.05, lob:2.00},
+  "Light":    {w:0.095, gh:0.42, ru:0.26, dt:1.15, amp:1.00, lob:2.00},
+  "Medium":   {w:0.155, gh:0.32, ru:0.20, dt:0.95, amp:1.00, lob:2.00},
+  "Bold":     {w:0.240, gh:0.28, ru:0.16, dt:0.90, amp:1.05, lob:2.00},
+  "Shipped":  {w:0.333, gh:0.32, ru:0.20, dt:0.95, amp:1.15, lob:2.00}
+};
+
+/* x = A sin(pi t / L) as cubics carrying the sine's own tangents — the same
+   Hermite fit the Python generator uses, so what this draws is what gets cut. */
+function sine(A, L, lobes, o){
+  o = o || {};
+  const sgn = o.mirror ? -1 : 1, x0 = o.x0 || 0, k = Math.PI / L;
+  const off = t => sgn * A * Math.sin(k * (t - x0));
+  const dof = t => sgn * A * k * Math.cos(k * (t - x0));
+  const n = lobes * 4, st = (lobes * L) / n;
+  let spans = [];
+  for (let i = 0; i < n; i++) spans.push([x0 + i * st, x0 + (i + 1) * st]);
+  if (o.reverse) spans = spans.map(s => [s[1], s[0]]).reverse();
+  const f = v => v.toFixed(2);
+  const d = (o.move === false) ? [] : ["M " + f(spans[0][0]) + " " + f(off(spans[0][0]))];
+  for (const [a, b] of spans){
+    const s = b - a;
+    d.push("C " + f(a + s/3) + " " + f(off(a) + dof(a)*s/3) + " " +
+                  f(b - s/3) + " " + f(off(b) - dof(b)*s/3) + " " + f(b) + " " + f(off(b)));
+  }
+  return d.join(" ");
+}
+const closedLens = (A, L) =>
+  sine(A, L, 1) + " " + sine(A, L, 1, {mirror:true, reverse:true, move:false}) + " Z";
+
+const el = (n, a) => { const e = document.createElementNS("http://www.w3.org/2000/svg", n);
+  for (const k in a) e.setAttribute(k, a[k]); return e; };
+
+function geom(){
+  const A = CAP * P.amp, L = A * P.lob, sw = A * P.w;
+  return {A, L, sw, ghost: sw * P.gh, rule: sw * P.ru, dot: sw * P.dt,
+          tail: sw * 0.35, pad: sw * 1.10, gap: CAP * P.gap};
+}
+
+function buildLockup(){
+  const g = geom(), mk = P.oneink ? "var(--ink)" : "var(--rust)";
+  const svg = el("svg", {xmlns:"http://www.w3.org/2000/svg", fill:"none"});
+  if (P.rule) svg.appendChild(el("path", {d:`M ${-g.tail} 0 L ${2*g.L + g.tail} 0`,
+    stroke:mk, "stroke-width":g.rule, "stroke-linecap":"round"}));
+  if (P.ghost) svg.appendChild(el("path", {d:sine(g.A, g.L, 2), stroke:mk,
+    "stroke-width":g.ghost, "stroke-linecap":"round",
+    "stroke-dasharray":`${(g.ghost*2.6).toFixed(1)} ${(g.ghost*2.3).toFixed(1)}`}));
+  svg.appendChild(el("path", {d:sine(g.A, g.L, 2, {mirror:true}), stroke:mk,
+    "stroke-width":g.sw, "stroke-linecap":"round"}));
+  if (P.dots) for (let i = 0; i < 2; i++)
+    svg.appendChild(el("circle", {cx:(i + 0.5) * g.L, cy:(i % 2 ? g.A : -g.A), r:g.dot, fill:mk}));
+
+  const fs = CAP * 1000 / 700;                      // cap 700 per 1000 em
+  const t = el("text", {x:2*g.L + g.gap, y:CAP/2, fill:"var(--ink)",
+    "font-family":"Antinode", "font-size":fs, "letter-spacing":P.tr * fs});
+  t.textContent = "ANTINODE";
+  svg.appendChild(t);
+  return {svg, g, fs};
+}
+
+function layout(svg, g, fs){
+  let wlen = 0;
+  const t = svg.querySelector("text");
+  try { wlen = t.getComputedTextLength() - P.tr * fs; } catch(e) { wlen = 1000; }
+  const half = g.A + g.sw/2 + g.pad, left = g.tail + g.pad;
+  const w = 2*g.L + g.gap + wlen + left;
+  svg.setAttribute("viewBox", `${-left} ${-half} ${w} ${2*half}`);
+  return {w, h: 2*half};
+}
+
+function buildIcon(){
+  const g = geom(), mk = P.oneink ? "var(--ink)" : "var(--rust)";
+  const sw = g.sw * 0.72, rule = sw * 0.42, over = sw * 0.9, pad = sw * 0.5;
+  const svg = el("svg", {xmlns:"http://www.w3.org/2000/svg", fill:"none"});
+  svg.appendChild(el("path", {d:`M ${-over} 0 L ${g.L + over} 0`, stroke:mk,
+    "stroke-width":rule, "stroke-linecap":"round"}));
+  svg.appendChild(el("path", {d:closedLens(g.A, g.L), stroke:mk, "stroke-width":sw,
+    "stroke-linejoin":"miter"}));
+  const half = g.A + sw/2 + pad;
+  svg.setAttribute("viewBox", `${-(over+pad)} ${-half} ${g.L + 2*over + 2*pad} ${2*half}`);
+  return {svg, ratio:(g.L + 2*over + 2*pad) / (2*half)};
+}
+
+function render(){
+  const hero = document.getElementById("hero");
+  hero.textContent = "";
+  const {svg, g, fs} = buildLockup();
+  hero.appendChild(svg);
+  const box = layout(svg, g, fs);
+
+  const sizes = document.getElementById("sizes");
+  sizes.textContent = "";
+  for (const px of [320, 200, 130]){
+    const d = document.createElement("div"); d.className = "spec";
+    const c = buildLockup(); c.svg.style.display = "block";
+    const s = document.createElement("div"); s.appendChild(c.svg);
+    d.appendChild(s);
+    const cap = document.createElement("span");
+    d.appendChild(cap);
+    sizes.appendChild(d);
+    const b = layout(c.svg, c.g, c.fs);
+    c.svg.setAttribute("width", px);
+    c.svg.setAttribute("height", Math.round(px * b.h / b.w));
+    cap.textContent = px + " PX WIDE";
+  }
+
+  const icons = document.getElementById("icons");
+  icons.textContent = "";
+  for (const px of [16, 24, 32, 48, 64]){
+    const {svg:i, ratio} = buildIcon();
+    i.setAttribute("height", px); i.setAttribute("width", Math.round(px * ratio));
+    const d = document.createElement("div"); d.className = "spec";
+    d.appendChild(i);
+    const s = document.createElement("span"); s.textContent = px;
+    d.appendChild(s); icons.appendChild(d);
+  }
+
+  const n = v => v.toFixed(2);
+  const set = (id, v, sub) => {
+    document.getElementById(id + "-v").textContent = v;
+    document.getElementById(id + "-s").textContent = sub;
+  };
+  set("w", n(g.sw), `${P.w.toFixed(3)} × amplitude · ${(g.sw/WORD_PEN).toFixed(2)}× the word`);
+  set("gh", n(g.ghost), `${P.gh.toFixed(2)} × mark pen`);
+  set("ru", n(g.rule), `${P.ru.toFixed(2)} × mark pen`);
+  set("dt", n(g.dot), `radius · ${(g.dot*2/g.sw).toFixed(2)}× the stroke across`);
+  set("amp", n(2*g.A), `${(2*P.amp).toFixed(2)} cap heights tall`);
+  set("lob", P.lob.toFixed(2), `lobe ${n(g.L)} × ${n(g.A)}`);
+  set("tr", P.tr.toFixed(3), `em · mark is ${n(2*g.L)} wide`);
+  set("gap", P.gap.toFixed(2), `cap heights · ${n(g.gap)} units`);
+
+  document.getElementById("out").innerHTML =
+    `<span class="k">KCAP</span>   = 100.0
+<span class="k">KA</span>     = KCAP * ${P.amp.toFixed(3)}
+<span class="k">KL</span>     = KA * ${P.lob.toFixed(2)}
+<span class="k">KSW</span>    = round(KA * ${P.w.toFixed(3)}, 2)      # ${n(g.sw)} — ${(g.sw/WORD_PEN).toFixed(2)}x the word
+<span class="k">KGHOST</span> = round(KSW * ${P.gh.toFixed(2)}, 2)
+<span class="k">KRULE</span>  = round(KSW * ${P.ru.toFixed(2)}, 2)
+<span class="k">KDOT</span>   = round(KSW * ${P.dt.toFixed(2)}, 2)
+<span class="k">KTRACK</span> = ${P.tr.toFixed(3)}
+<span class="k">KGAP</span>   = KCAP * ${P.gap.toFixed(2)}`;
+}
+
+const BIND = ["w","gh","ru","dt","amp","lob","tr","gap"];
+for (const k of BIND){
+  const i = document.getElementById(k);
+  i.value = P[k];
+  i.addEventListener("input", () => { P[k] = parseFloat(i.value); render(); });
+}
+for (const [id, key] of [["t-ghost","ghost"],["t-rule","rule"],["t-dots","dots"],["t-1c","oneink"]]){
+  const c = document.getElementById(id);
+  c.checked = P[key];
+  c.addEventListener("change", () => { P[key] = c.checked; render(); });
+}
+const pw = document.getElementById("presets");
+for (const name in PRESETS){
+  const b = document.createElement("button");
+  b.type = "button"; b.textContent = name;
+  if (name === "Shipped") b.className = "warn";
+  b.addEventListener("click", () => {
+    Object.assign(P, PRESETS[name]);
+    for (const k of BIND) document.getElementById(k).value = P[k];
+    render();
+  });
+  pw.appendChild(b);
+}
+
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(render);
+render();
+</script>
