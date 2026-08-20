@@ -47,6 +47,11 @@ h1 em{font-style:italic;color:var(--rust)}
     repeating-linear-gradient(to bottom,var(--grid) 0 1px,transparent 1px 44px);
 }
 .hero-stage svg{display:block;width:100%;max-width:760px;height:auto}
+.hero-stage.col svg{width:auto;max-width:none;max-height:440px}
+.lock{display:flex;flex-direction:column;gap:.55rem}
+.lock+.lock{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--rule)}
+.lock .cap{font:600 .625rem/1.5 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.lock .cap b{color:var(--rust);font-weight:600}
 .row{display:flex;align-items:flex-end;gap:clamp(1rem,3vw,2.4rem);flex-wrap:wrap}
 .spec{display:flex;flex-direction:column;align-items:flex-start;gap:.5rem}
 .spec svg{display:block;height:auto}
@@ -91,7 +96,8 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
 <header>
   <p class="eyebrow">Antinode &middot; direction K</p>
   <h1>Dial the weight.<br><em>Then tell me the number.</em></h1>
-  <p class="lede">Every control is live. The block at the bottom prints the exact constants for
+  <p class="lede">Three lockups off one set of numbers, so they can only be compared at the same
+    weight. Every control is live; the block at the bottom prints the exact constants for
     <code>build&#8209;antinode.py</code> &mdash; read them off and I&rsquo;ll cut the masters to
     match, no screenshots either way.</p>
 </header>
@@ -99,11 +105,23 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
 <div class="bench">
   <div class="stage">
     <div class="panel">
-      <h2>Lockup</h2>
-      <div class="hero-stage" id="hero"></div>
+      <h2>Three lockups, one set of controls</h2>
+      <div class="lock">
+        <span class="cap"><b>K</b> &nbsp;mark, then word &mdash; the two sit apart</span>
+        <div class="hero-stage" id="hero-K"></div>
+      </div>
+      <div class="lock">
+        <span class="cap"><b>L</b> &nbsp;C&rsquo;s reading &mdash; the axis runs on and becomes the baseline</span>
+        <div class="hero-stage" id="hero-L"></div>
+      </div>
+      <div class="lock">
+        <span class="cap"><b>M</b> &nbsp;H&rsquo;s reading &mdash; the opening lobe stands in the A&rsquo;s slot</span>
+        <div class="hero-stage" id="hero-M"></div>
+      </div>
     </div>
     <div class="panel">
       <h2>At the sizes it has to survive</h2>
+      <div class="presets" id="which" style="margin-bottom:1.1rem"></div>
       <div class="row" id="sizes"></div>
     </div>
     <div class="panel">
@@ -129,6 +147,31 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
         <label for="ru">Rule</label><span class="val" id="ru-v"></span>
         <input type="range" id="ru" min="0" max="0.7" step="0.02">
         <span class="sub" id="ru-s"></span>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Lockup L</legend>
+      <div class="ctl" style="padding-top:0">
+        <span class="sub" style="margin-bottom:.5rem">The rule does not stop at the wave &mdash;
+          it carries on under the word, so one line does both jobs. Column is the same drawing
+          stood up: the tall lockup this family has never had.</span>
+      </div>
+      <div class="presets" id="orient"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Lockup M</legend>
+      <div class="ctl" style="padding-top:0">
+        <span class="sub" style="margin-bottom:.5rem">Legs carry the lobe past the node, so the
+          rule crosses it where an A&rsquo;s bar goes instead of just touching its feet. At 0 the
+          arch stands on the line and reads as the face&rsquo;s N.</span>
+      </div>
+      <div class="presets" id="carry"></div>
+      <div class="ctl">
+        <label for="leg">A legs</label><span class="val" id="leg-v"></span>
+        <input type="range" id="leg" min="0" max="0.3" step="0.01">
+        <span class="sub" id="leg-s"></span>
       </div>
     </fieldset>
 
@@ -225,16 +268,20 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
 </div>
 
 <script>
-const WORD_PEN = 9.43, CAP = 100;
+const WORD_PEN = 9.43, CAP = 100, FS = CAP * 1000 / 700;   // cap 700 per 1000 em
+const SB = 0.091;                                          // the face's sidebearing, in em
 
 const CURVES = [["2.5","An25","round"],["3.2","An32","softened"],
                 ["4.0","An40","squared"],["5.5","An55","hard"]];
+const MARKS   = [["Dot","dot"],["Cross","cross"]];
+const ORIENTS = [["Line","line"],["Column","column"]];
+const CARRY   = [["Full","full"],["Under the A","short"]];
+const DIRS    = ["K","L","M"];
 
-const P = {curve:"An40", w:0.155, gh:0.32, ru:0.20, dt:0.95, xp:0.45, xa:1.40, amp:1.00, lob:2.00,
-           tr:0.11, gap:1.15, mark:"dot", crest:true, trough:true,
-           ghost:true, rule:true, oneink:false};
-
-const MARKS = [["Dot","dot"],["Cross","cross"]];
+const P = {curve:"An40", w:0.155, gh:0.32, ru:0.20, dt:0.95, xp:0.45, xa:1.40,
+           amp:1.00, lob:2.00, tr:0.11, gap:1.15,
+           mark:"dot", crest:true, trough:true, ghost:true, rule:true, oneink:false,
+           orient:"line", dir:"K", carry:"full", leg:0.14};
 
 const PRESETS = {
   "Hairline": {w:0.055, gh:0.55, ru:0.34, dt:1.30, amp:1.05, lob:2.00},
@@ -264,6 +311,7 @@ function sine(A, L, lobes, o){
   }
   return d.join(" ");
 }
+
 /* One span of that same sine, x0 to x1, as cubics carrying its tangents. The
    cross arms are cut from here, which is why they curve. */
 function arcOf(A, L, x0, x1, sgn, segs){
@@ -285,39 +333,20 @@ const closedLens = (A, L) =>
 const el = (n, a) => { const e = document.createElementNS("http://www.w3.org/2000/svg", n);
   for (const k in a) e.setAttribute(k, a[k]); return e; };
 
+/* ---------------------------------------------------------------- pieces */
+const ink = () => P.oneink ? "var(--ink)" : "var(--rust)";
+const newSvg = () => el("svg", {xmlns:"http://www.w3.org/2000/svg", fill:"none"});
+const stroke = (d, sw, mk, dash) => el("path", Object.assign(
+  {d, stroke:mk, "stroke-width":sw, "stroke-linecap":"round"},
+  dash ? {"stroke-dasharray":dash} : {}));
+const dashOf = g => `${(g.ghost*2.6).toFixed(1)} ${(g.ghost*2.3).toFixed(1)}`;
+
 function geom(){
   const A = CAP * P.amp, L = A * P.lob, sw = A * P.w;
   const xr = Math.min(sw * P.dt * 1.6, A * 0.98);   // the cross's vertical reach
   return {A, L, sw, ghost: sw * P.gh, rule: sw * P.ru, dot: sw * P.dt,
           xr, xh: P.xa * L * Math.asin(xr / A) / Math.PI, cross: sw * P.xp,
           tail: sw * 0.35, pad: sw * 1.10, gap: CAP * P.gap};
-}
-
-function buildLockup(){
-  const g = geom(), mk = P.oneink ? "var(--ink)" : "var(--rust)";
-  const svg = el("svg", {xmlns:"http://www.w3.org/2000/svg", fill:"none"});
-  if (P.rule) svg.appendChild(el("path", {d:`M ${-g.tail} 0 L ${2*g.L + g.tail} 0`,
-    stroke:mk, "stroke-width":g.rule, "stroke-linecap":"round"}));
-  if (P.ghost) svg.appendChild(el("path", {d:sine(g.A, g.L, 2), stroke:mk,
-    "stroke-width":g.ghost, "stroke-linecap":"round",
-    "stroke-dasharray":`${(g.ghost*2.6).toFixed(1)} ${(g.ghost*2.3).toFixed(1)}`}));
-  svg.appendChild(el("path", {d:sine(g.A, g.L, 2, {mirror:true}), stroke:mk,
-    "stroke-width":g.sw, "stroke-linecap":"round"}));
-  const on = [P.crest, P.trough];
-  for (let i = 0; i < 2; i++){
-    if (!on[i]) continue;
-    const cx = (i + 0.5) * g.L, cy = i % 2 ? g.A : -g.A;
-    svg.appendChild(P.mark === "dot"
-      ? el("circle", {cx, cy, r:g.dot, fill:mk})
-      : crossAt(cx, cy, g, mk));
-  }
-
-  const fs = CAP * 1000 / 700;                      // cap 700 per 1000 em
-  const t = el("text", {x:2*g.L + g.gap, y:CAP/2, fill:"var(--ink)",
-    "font-family":P.curve, "font-size":fs, "letter-spacing":P.tr * fs});
-  t.textContent = "ANTINODE";
-  svg.appendChild(t);
-  return {svg, g, fs};
 }
 
 /* The crossing at a node, translated to the antinode: the rising phase and the
@@ -330,52 +359,161 @@ function crossAt(cx, cy, g, mk){
   return grp;
 }
 
-function layout(svg, g, fs){
-  let wlen = 0;
-  const t = svg.querySelector("text");
-  try { wlen = t.getComputedTextLength() - P.tr * fs; } catch(e) { wlen = 1000; }
-  const shown = P.crest || P.trough;
-  const reach = !shown ? 0 : P.mark === "dot" ? g.dot : g.xr + g.cross/2;
-  const half = g.A + Math.max(g.sw/2, reach) + g.pad, left = g.tail + g.pad;
-  const w = 2*g.L + g.gap + wlen + left;
-  svg.setAttribute("viewBox", `${-left} ${-half} ${w} ${2*half}`);
-  return {w, h: 2*half};
+function antinodes(parent, g, mk, pts){
+  const on = [P.crest, P.trough];
+  pts.forEach(([cx, cy], i) => {
+    if (!on[i]) return;
+    parent.appendChild(P.mark === "dot"
+      ? el("circle", {cx, cy, r:g.dot, fill:mk}) : crossAt(cx, cy, g, mk));
+  });
+}
+const reachOf = g => !(P.crest || P.trough) ? 0
+  : P.mark === "dot" ? g.dot : g.xr + g.cross/2;
+
+function setWord(text, x, y){
+  const t = el("text", {x, y, fill:"var(--ink)", "font-family":P.curve,
+    "font-size":FS, "letter-spacing":P.tr * FS});
+  t.textContent = text;
+  return t;
+}
+// letter-spacing hangs one more space off the last glyph; take it back
+const wlenOf = t => { try { return t.getComputedTextLength() - P.tr * FS; }
+                      catch(e){ return 1000; } };
+
+/* ------------------------------------------- K: mark, gap, word beside it */
+function buildK(){
+  const g = geom(), mk = ink(), svg = newSvg();
+  if (P.rule) svg.appendChild(stroke(`M ${-g.tail} 0 L ${2*g.L + g.tail} 0`, g.rule, mk));
+  if (P.ghost) svg.appendChild(stroke(sine(g.A, g.L, 2), g.ghost, mk, dashOf(g)));
+  svg.appendChild(stroke(sine(g.A, g.L, 2, {mirror:true}), g.sw, mk));
+  antinodes(svg, g, mk, [[0.5*g.L, -g.A], [1.5*g.L, g.A]]);
+  const t = setWord("ANTINODE", 2*g.L + g.gap, CAP/2);
+  svg.appendChild(t);
+  return {svg, fit(){
+    const half = Math.max(g.A + Math.max(g.sw/2, reachOf(g)), CAP/2) + g.pad;
+    const left = g.tail + g.pad, w = 2*g.L + g.gap + wlenOf(t) + left;
+    svg.setAttribute("viewBox", `${-left} ${-half} ${w} ${2*half}`);
+    return {w, h: 2*half};
+  }};
 }
 
+/* ------------------------- L: one line — the axis becomes the baseline.
+   C's stacked cut said it first: the string at rest and the line the word
+   stands on are the same line, so the rule runs past the wave and under the
+   whole name. Column is that drawing rotated, which is the only way this
+   family gets a tall lockup. */
+function buildL(){
+  const g = geom(), mk = ink(), svg = newSvg(), root = el("g", {});
+  svg.appendChild(root);
+  const ru = P.rule ? stroke("", g.rule, mk) : null;
+  if (ru) root.appendChild(ru);
+  if (P.ghost) root.appendChild(stroke(sine(g.A, g.L, 2), g.ghost, mk, dashOf(g)));
+  root.appendChild(stroke(sine(g.A, g.L, 2, {mirror:true}), g.sw, mk));
+  antinodes(root, g, mk, [[0.5*g.L, -g.A], [1.5*g.L, g.A]]);
+  const t = setWord("ANTINODE", 2*g.L + g.gap, 0);     // y = 0: on the line
+  root.appendChild(t);
+  return {svg, fit(){
+    const right = 2*g.L + g.gap + wlenOf(t), tl = CAP * 0.30;   // the string runs on
+    if (ru) ru.setAttribute("d", `M ${-tl} 0 L ${(right + tl).toFixed(2)} 0`);
+    const reach = Math.max(g.sw/2, reachOf(g));
+    const top = Math.max(g.A + reach, CAP) + g.pad, bot = g.A + reach + g.pad;
+    let b = {x: -(tl + g.pad), y: -top, w: right + 2*tl + 2*g.pad, h: top + bot};
+    if (P.orient === "column"){
+      root.setAttribute("transform", "rotate(90)");     // (x,y) -> (-y,x)
+      b = {x: -(b.y + b.h), y: b.x, w: b.h, h: b.w};
+    } else root.removeAttribute("transform");
+    svg.setAttribute("viewBox", `${b.x.toFixed(2)} ${b.y.toFixed(2)} ${b.w.toFixed(2)} ${b.h.toFixed(2)}`);
+    return {w: b.w, h: b.h};
+  }};
+}
+
+/* ---------------------------------------------- M: the lobe is the A.
+   H's reading, in this family's weights: the opening lobe does not sit next
+   to the A, it stands in the A's slot with the rule crossing it where the bar
+   goes, and the rest of the name runs out of it along the same line. Both
+   antinodes here belong to the same crest — the swing up and the swing
+   down — because there is only one lobe drawn solid. */
+function buildM(){
+  const g = geom(), mk = ink(), svg = newSvg();
+  const ru = P.rule ? stroke("", g.rule, mk) : null;
+  const gh = P.ghost ? stroke("", g.ghost, mk, dashOf(g)) : null;
+  if (ru) svg.appendChild(ru);
+  if (gh) svg.appendChild(gh);
+  const leg = g.L * P.leg;
+  svg.appendChild(stroke(arcOf(g.A, g.L, -leg, g.L + leg, -1, 8), g.sw, mk));
+  antinodes(svg, g, mk, [[0.5*g.L, -g.A], [0.5*g.L, g.A]]);
+  // the lobe is a letter, so it is spaced like one: its own round cap, then a
+  // sidebearing and a tracking step, exactly what sits between two glyphs
+  const start = g.L + g.sw/2 + (P.tr + SB) * FS;
+  const t = setWord("NTINODE", start, 0);
+  svg.appendChild(t);                                  // type last: the wave passes behind
+  return {svg, fit(){
+    const right = start + wlenOf(t);
+    const tl = CAP * 0.30, lft = Math.max(tl, leg + g.sw/2);
+    if (ru) ru.setAttribute("d", `M ${(-lft).toFixed(2)} 0 L ${(right + tl).toFixed(2)} 0`);
+    if (gh) gh.setAttribute("d", sine(g.A, g.L,
+      P.carry === "full" ? Math.max(1, Math.round(right / g.L)) : 1));
+    const reach = Math.max(g.sw/2, reachOf(g));
+    const drop = g.A * Math.sin(Math.PI * P.leg) + g.sw/2;   // how far the legs hang
+    const top = Math.max(g.A + reach, CAP) + g.pad;
+    const bot = Math.max((P.ghost || P.trough) ? g.A + reach : g.rule, drop) + g.pad;
+    const left = lft + g.pad, w = right + tl + left + g.pad;
+    svg.setAttribute("viewBox", `${(-left).toFixed(2)} ${(-top).toFixed(2)} `
+      + `${w.toFixed(2)} ${(top + bot).toFixed(2)}`);
+    return {w, h: top + bot};
+  }};
+}
+
+const BUILD = {K: buildK, L: buildL, M: buildM};
+
+/* The icon is never a scaled lockup: one antinode, closed, with the axis
+   through it — a closed lens alone reads as a diamond. */
 function buildIcon(){
-  const g = geom(), mk = P.oneink ? "var(--ink)" : "var(--rust)";
+  const g = geom(), mk = ink();
   const sw = g.sw * 0.72, rule = sw * 0.42, over = sw * 0.9, pad = sw * 0.5;
-  const svg = el("svg", {xmlns:"http://www.w3.org/2000/svg", fill:"none"});
-  svg.appendChild(el("path", {d:`M ${-over} 0 L ${g.L + over} 0`, stroke:mk,
-    "stroke-width":rule, "stroke-linecap":"round"}));
+  const svg = newSvg();
+  svg.appendChild(stroke(`M ${-over} 0 L ${g.L + over} 0`, rule, mk));
   svg.appendChild(el("path", {d:closedLens(g.A, g.L), stroke:mk, "stroke-width":sw,
-    "stroke-linejoin":"miter"}));
+    "stroke-linejoin":"miter", fill:"none"}));
   const half = g.A + sw/2 + pad;
   svg.setAttribute("viewBox", `${-(over+pad)} ${-half} ${g.L + 2*over + 2*pad} ${2*half}`);
   return {svg, ratio:(g.L + 2*over + 2*pad) / (2*half)};
 }
 
+/* ---------------------------------------------------------------- render */
 function render(){
-  const hero = document.getElementById("hero");
-  hero.textContent = "";
-  const {svg, g, fs} = buildLockup();
-  hero.appendChild(svg);
-  const box = layout(svg, g, fs);
+  const g = geom();
+
+  for (const k of DIRS){
+    const host = document.getElementById("hero-" + k);
+    host.textContent = "";
+    host.classList.toggle("col", k === "L" && P.orient === "column");
+    const {svg, fit} = BUILD[k]();
+    host.appendChild(svg);
+    const b = fit();
+    if (b.h > b.w){                      // a column is sized off its height
+      svg.style.height = "440px";
+      svg.style.width = (440 * b.w / b.h).toFixed(1) + "px";
+    }
+  }
 
   const sizes = document.getElementById("sizes");
   sizes.textContent = "";
   for (const px of [320, 200, 130]){
+    const {svg, fit} = BUILD[P.dir]();
+    svg.style.display = "block";
     const d = document.createElement("div"); d.className = "spec";
-    const c = buildLockup(); c.svg.style.display = "block";
-    const s = document.createElement("div"); s.appendChild(c.svg);
-    d.appendChild(s);
+    const holder = document.createElement("div"); holder.appendChild(svg);
     const cap = document.createElement("span");
-    d.appendChild(cap);
-    sizes.appendChild(d);
-    const b = layout(c.svg, c.g, c.fs);
-    c.svg.setAttribute("width", px);
-    c.svg.setAttribute("height", Math.round(px * b.h / b.w));
-    cap.textContent = px + " PX WIDE";
+    d.appendChild(holder); d.appendChild(cap); sizes.appendChild(d);
+    const b = fit();
+    if (b.h > b.w){
+      svg.setAttribute("height", px); svg.setAttribute("width", Math.round(px * b.w / b.h));
+      cap.textContent = px + " PX TALL";
+    } else {
+      svg.setAttribute("width", px); svg.setAttribute("height", Math.round(px * b.h / b.w));
+      cap.textContent = px + " PX WIDE";
+    }
   }
 
   const icons = document.getElementById("icons");
@@ -384,9 +522,8 @@ function render(){
     const {svg:i, ratio} = buildIcon();
     i.setAttribute("height", px); i.setAttribute("width", Math.round(px * ratio));
     const d = document.createElement("div"); d.className = "spec";
-    d.appendChild(i);
     const s = document.createElement("span"); s.textContent = px;
-    d.appendChild(s); icons.appendChild(d);
+    d.appendChild(i); d.appendChild(s); icons.appendChild(d);
   }
 
   const n = v => v.toFixed(2);
@@ -408,7 +545,9 @@ function render(){
   set("amp", n(2*g.A), `${(2*P.amp).toFixed(2)} cap heights tall`);
   set("lob", P.lob.toFixed(2), `lobe ${n(g.L)} × ${n(g.A)}`);
   set("tr", P.tr.toFixed(3), `em · mark is ${n(2*g.L)} wide`);
-  set("gap", P.gap.toFixed(2), `cap heights · ${n(g.gap)} units`);
+  set("leg", P.leg.toFixed(2), P.leg === 0 ? "the arch stands on the line"
+      : `${n(g.L * P.leg)} past each node · hangs ${n(g.A * Math.sin(Math.PI * P.leg))} below`);
+  set("gap", P.gap.toFixed(2), `cap heights · ${n(g.gap)} units · K and L only`);
 
   const where = !(P.crest || P.trough) ? "                # neither antinode marked"
     : P.crest && P.trough ? "" : `                # ${P.crest ? "crest" : "trough"} only`;
@@ -427,10 +566,15 @@ ${P.mark === "dot"
 <span class="k">KXSPLAY</span> = ${P.xa.toFixed(2)}`}
 <span class="k">ARCH_N</span> = ${CURVES.find(c => c[1] === P.curve)[0]}      # in glyphs.py — recuts the face
 <span class="k">KTRACK</span> = ${P.tr.toFixed(3)}
-<span class="k">KGAP</span>   = KCAP * ${P.gap.toFixed(2)}`;
+<span class="k">KGAP</span>   = KCAP * ${P.gap.toFixed(2)}
+<span class="k">LORIENT</span> = ${JSON.stringify(P.orient)}       # L only — the rule runs on under the word
+<span class="k">MSTART</span> = KL + KSW/2 + ${(P.tr + SB).toFixed(3)} * ${FS.toFixed(2)}   # M only — the lobe spaced as a letter
+<span class="k">MLEG</span>   = KL * ${P.leg.toFixed(2)}
+<span class="k">MCARRY</span> = ${JSON.stringify(P.carry)}`;
 }
 
-const BIND = ["w","gh","ru","dt","xp","xa","amp","lob","tr","gap"];
+/* ---------------------------------------------------------------- wiring */
+const BIND = ["w","gh","ru","dt","xp","xa","amp","lob","tr","gap","leg"];
 for (const k of BIND){
   const i = document.getElementById(k);
   i.value = P[k];
@@ -442,31 +586,26 @@ for (const [id, key] of [["t-ghost","ghost"],["t-rule","rule"],["t-crest","crest
   c.checked = P[key];
   c.addEventListener("change", () => { P[key] = c.checked; render(); });
 }
-const mw = document.getElementById("mark");
-for (const [label, kind] of MARKS){
-  const b = document.createElement("button");
-  b.type = "button"; b.textContent = label;
-  b.addEventListener("click", () => {
-    P.mark = kind;
-    [...mw.children].forEach(c => c.classList.toggle("on", c === b));
-    render();
-  });
-  if (kind === P.mark) b.classList.add("on");
-  mw.appendChild(b);
-}
 
-const cw = document.getElementById("curve");
-for (const [label, fam, word] of CURVES){
-  const b = document.createElement("button");
-  b.type = "button"; b.textContent = label + " · " + word;
-  b.addEventListener("click", () => {
-    P.curve = fam;
-    [...cw.children].forEach(c => c.classList.toggle("on", c === b));
-    render();
-  });
-  if (fam === P.curve) b.classList.add("on");
-  cw.appendChild(b);
+function switcher(host, items, key){
+  const w = document.getElementById(host);
+  for (const [label, value] of items){
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = label;
+    b.addEventListener("click", () => {
+      P[key] = value;
+      [...w.children].forEach(c => c.classList.toggle("on", c === b));
+      render();
+    });
+    if (value === P[key]) b.classList.add("on");
+    w.appendChild(b);
+  }
 }
+switcher("mark", MARKS, "mark");
+switcher("orient", ORIENTS, "orient");
+switcher("carry", CARRY, "carry");
+switcher("which", DIRS.map(d => [d, d]), "dir");
+switcher("curve", CURVES.map(([label, fam, word]) => [label + " · " + word, fam]), "curve");
 
 const pw = document.getElementById("presets");
 for (const name in PRESETS){
