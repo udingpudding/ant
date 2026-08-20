@@ -3,8 +3,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;0,800;1,800&display=swap">
 <style>
-@font-face{font-family:"Antinode";font-weight:400;font-style:normal;font-display:block;
-  src:url(data:font/woff2;base64,{{FONT}}) format("woff2");}
+@font-face{font-family:"An25";font-display:block;src:url(data:font/woff2;base64,{{FONT25}}) format("woff2");}
+@font-face{font-family:"An32";font-display:block;src:url(data:font/woff2;base64,{{FONT32}}) format("woff2");}
+@font-face{font-family:"An40";font-display:block;src:url(data:font/woff2;base64,{{FONT40}}) format("woff2");}
+@font-face{font-family:"An55";font-display:block;src:url(data:font/woff2;base64,{{FONT55}}) format("woff2");}
 
 /* One committed light world — the project has no dark mode on purpose, so every
    colour is painted explicitly rather than inherited from the host. */
@@ -74,6 +76,7 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
   color:var(--ink);background:var(--bone);border:1px solid var(--rule);padding:.55rem .6rem;cursor:pointer}
 .presets button:hover{border-color:var(--rust);color:var(--rust)}
 .presets button.warn{color:var(--muted)}
+.presets button.on{background:var(--rust);border-color:var(--rust);color:var(--bone)}
 
 /* ---- readout ---- */
 .readout{margin-top:1rem}
@@ -163,6 +166,15 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
     </fieldset>
 
     <fieldset>
+      <legend>Letterform</legend>
+      <div class="ctl" style="padding-top:0">
+        <span class="sub" style="margin-bottom:.5rem">How square the round letters sit. The
+          exponent of the curve the whole face is drawn from — 2 would be a plain ellipse.</span>
+      </div>
+      <div class="presets" id="curve"></div>
+    </fieldset>
+
+    <fieldset>
       <legend>Show</legend>
       <div class="toggles">
         <label class="tog"><input type="checkbox" id="t-ghost" checked> Ghost</label>
@@ -191,7 +203,10 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
 <script>
 const WORD_PEN = 9.43, CAP = 100;
 
-const P = {w:0.155, gh:0.32, ru:0.20, dt:0.95, amp:1.00, lob:2.00, tr:0.11, gap:1.15,
+const CURVES = [["2.5","An25","round"],["3.2","An32","softened"],
+                ["4.0","An40","squared"],["5.5","An55","hard"]];
+
+const P = {curve:"An40", w:0.155, gh:0.32, ru:0.20, dt:0.95, amp:1.00, lob:2.00, tr:0.11, gap:1.15,
            ghost:true, rule:true, dots:true, oneink:false};
 
 const PRESETS = {
@@ -249,7 +264,7 @@ function buildLockup(){
 
   const fs = CAP * 1000 / 700;                      // cap 700 per 1000 em
   const t = el("text", {x:2*g.L + g.gap, y:CAP/2, fill:"var(--ink)",
-    "font-family":"Antinode", "font-size":fs, "letter-spacing":P.tr * fs});
+    "font-family":P.curve, "font-size":fs, "letter-spacing":P.tr * fs});
   t.textContent = "ANTINODE";
   svg.appendChild(t);
   return {svg, g, fs};
@@ -334,6 +349,7 @@ function render(){
 <span class="k">KGHOST</span> = round(KSW * ${P.gh.toFixed(2)}, 2)
 <span class="k">KRULE</span>  = round(KSW * ${P.ru.toFixed(2)}, 2)
 <span class="k">KDOT</span>   = round(KSW * ${P.dt.toFixed(2)}, 2)
+<span class="k">ARCH_N</span> = ${CURVES.find(c => c[1] === P.curve)[0]}      # in glyphs.py — recuts the face
 <span class="k">KTRACK</span> = ${P.tr.toFixed(3)}
 <span class="k">KGAP</span>   = KCAP * ${P.gap.toFixed(2)}`;
 }
@@ -349,6 +365,19 @@ for (const [id, key] of [["t-ghost","ghost"],["t-rule","rule"],["t-dots","dots"]
   c.checked = P[key];
   c.addEventListener("change", () => { P[key] = c.checked; render(); });
 }
+const cw = document.getElementById("curve");
+for (const [label, fam, word] of CURVES){
+  const b = document.createElement("button");
+  b.type = "button"; b.textContent = label + " · " + word;
+  b.addEventListener("click", () => {
+    P.curve = fam;
+    [...cw.children].forEach(c => c.classList.toggle("on", c === b));
+    render();
+  });
+  if (fam === P.curve) b.classList.add("on");
+  cw.appendChild(b);
+}
+
 const pw = document.getElementById("presets");
 for (const name in PRESETS){
   const b = document.createElement("button");
@@ -362,6 +391,9 @@ for (const name in PRESETS){
   pw.appendChild(b);
 }
 
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(render);
+// every cut has to be loaded before the first measure, or the layout is sized
+// against a fallback face
+Promise.all(CURVES.map(c => document.fonts.load("16px " + c[1])))
+  .then(() => document.fonts.ready).then(render).catch(render);
 render();
 </script>

@@ -87,16 +87,7 @@ def build():
     # ---- TTF (glyf). Cubics become quadratics; 0.1 units of tolerance is a
     # seventh of a thousandth of the em, well under the fitting error already
     # accepted upstream.
-    fb = FontBuilder(glyphs.UPEM, isTTF=True)
-    fb.setupGlyphOrder(ORDER)
-    fb.setupCharacterMap(glyphs.CMAP)
-    gl = {}
-    for n in ORDER:
-        tp = TTGlyphPen(None)
-        draw(n, Cu2QuPen(tp, 0.1))
-        gl[n] = tp.glyph()
-    fb.setupGlyf(gl)
-    _common(fb, widths)
+    fb = _ttf()
     ttf = os.path.join(OUT, f"{FAMILY}-{STYLE}.ttf")
     fb.save(ttf)
 
@@ -114,6 +105,47 @@ def build():
           f"worst curve fit {worst:.3f} units · overlaps "
           f"{'removed' if clean else 'left to nonzero winding'}")
     return worst, clean
+
+
+def _ttf():
+    """The quadratic cut, in memory. Shared by the file build and by the bench,
+    which needs the face at several curve exponents at once."""
+    widths = {n: (glyphs.advance(n) if n in glyphs.GLYPHS else glyphs.ADV) for n in ORDER}
+    fb = FontBuilder(glyphs.UPEM, isTTF=True)
+    fb.setupGlyphOrder(ORDER)
+    fb.setupCharacterMap(glyphs.CMAP)
+    gl = {}
+    for n in ORDER:
+        tp = TTGlyphPen(None)
+        draw(n, Cu2QuPen(tp, 0.1))
+        gl[n] = tp.glyph()
+    fb.setupGlyf(gl)
+    _common(fb, widths)
+    return fb
+
+
+def woff2_at(exponent):
+    """The face recut at a different curve exponent, as WOFF2 bytes. The bench
+    switches between these live, because the exponent is the one control that
+    cannot be faked with CSS."""
+    import io
+    prev = glyphs.ARCH_N
+    glyphs.ARCH_N = exponent
+    glyphs._cache.clear()
+    glyphs.TAB = None
+    try:
+        fb = _ttf()
+        buf = io.BytesIO()
+        fb.save(buf)
+        f = TTFont(buf)
+        f.flavor = "woff2"
+        out = io.BytesIO()
+        f.save(out)
+        return out.getvalue()
+    finally:
+        glyphs.ARCH_N = prev
+        glyphs._cache.clear()
+        glyphs.TAB = None
 
 
 def _common(fb, widths):
