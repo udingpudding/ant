@@ -130,10 +130,34 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
         <input type="range" id="ru" min="0" max="0.7" step="0.02">
         <span class="sub" id="ru-s"></span>
       </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Antinode</legend>
+      <div class="ctl" style="padding-top:0">
+        <span class="sub" style="margin-bottom:.5rem">The &times; is not a drawn sign &mdash; it
+          is the two phases crossing at a node, cut out and carried up to the antinode, so it
+          keeps the wave&rsquo;s own curve and its own angle.</span>
+      </div>
+      <div class="presets" id="mark"></div>
+      <div class="toggles" style="margin-top:.75rem">
+        <label class="tog"><input type="checkbox" id="t-crest" checked> Crest</label>
+        <label class="tog"><input type="checkbox" id="t-trough" checked> Trough</label>
+      </div>
       <div class="ctl">
-        <label for="dt">Antinode dot</label><span class="val" id="dt-v"></span>
+        <label for="dt">Mark size</label><span class="val" id="dt-v"></span>
         <input type="range" id="dt" min="0" max="1.8" step="0.05">
         <span class="sub" id="dt-s"></span>
+      </div>
+      <div class="ctl" id="xp-ctl">
+        <label for="xp">Cross pen</label><span class="val" id="xp-v"></span>
+        <input type="range" id="xp" min="0.1" max="1" step="0.02">
+        <span class="sub" id="xp-s"></span>
+      </div>
+      <div class="ctl" id="xa-ctl">
+        <label for="xa">Cross splay</label><span class="val" id="xa-v"></span>
+        <input type="range" id="xa" min="1" max="2.2" step="0.05">
+        <span class="sub" id="xa-s"></span>
       </div>
     </fieldset>
 
@@ -180,7 +204,6 @@ input[type=range]:focus-visible,button:focus-visible,input[type=checkbox]:focus-
       <div class="toggles">
         <label class="tog"><input type="checkbox" id="t-ghost" checked> Ghost</label>
         <label class="tog"><input type="checkbox" id="t-rule" checked> Rule</label>
-        <label class="tog"><input type="checkbox" id="t-dots" checked> Dots</label>
         <label class="tog"><input type="checkbox" id="t-1c"> One ink</label>
       </div>
     </fieldset>
@@ -207,8 +230,11 @@ const WORD_PEN = 9.43, CAP = 100;
 const CURVES = [["2.5","An25","round"],["3.2","An32","softened"],
                 ["4.0","An40","squared"],["5.5","An55","hard"]];
 
-const P = {curve:"An40", w:0.155, gh:0.32, ru:0.20, dt:0.95, amp:1.00, lob:2.00, tr:0.11, gap:1.15,
-           ghost:true, rule:true, dots:true, oneink:false};
+const P = {curve:"An40", w:0.155, gh:0.32, ru:0.20, dt:0.95, xp:0.45, xa:1.40, amp:1.00, lob:2.00,
+           tr:0.11, gap:1.15, mark:"dot", crest:true, trough:true,
+           ghost:true, rule:true, oneink:false};
+
+const MARKS = [["Dot","dot"],["Cross","cross"]];
 
 const PRESETS = {
   "Hairline": {w:0.055, gh:0.55, ru:0.34, dt:1.30, amp:1.05, lob:2.00},
@@ -238,6 +264,21 @@ function sine(A, L, lobes, o){
   }
   return d.join(" ");
 }
+/* One span of that same sine, x0 to x1, as cubics carrying its tangents. The
+   cross arms are cut from here, which is why they curve. */
+function arcOf(A, L, x0, x1, sgn, segs){
+  const k = Math.PI / L, f = v => v.toFixed(2);
+  const off = t => sgn * A * Math.sin(k * t), dof = t => sgn * A * k * Math.cos(k * t);
+  const st = (x1 - x0) / segs;
+  let d = "M " + f(x0) + " " + f(off(x0));
+  for (let i = 0; i < segs; i++){
+    const a = x0 + i * st, b = a + st;
+    d += " C " + f(a + st/3) + " " + f(off(a) + dof(a)*st/3) + " " +
+                 f(b - st/3) + " " + f(off(b) - dof(b)*st/3) + " " + f(b) + " " + f(off(b));
+  }
+  return d;
+}
+
 const closedLens = (A, L) =>
   sine(A, L, 1) + " " + sine(A, L, 1, {mirror:true, reverse:true, move:false}) + " Z";
 
@@ -246,7 +287,9 @@ const el = (n, a) => { const e = document.createElementNS("http://www.w3.org/200
 
 function geom(){
   const A = CAP * P.amp, L = A * P.lob, sw = A * P.w;
+  const xr = Math.min(sw * P.dt * 1.6, A * 0.98);   // the cross's vertical reach
   return {A, L, sw, ghost: sw * P.gh, rule: sw * P.ru, dot: sw * P.dt,
+          xr, xh: P.xa * L * Math.asin(xr / A) / Math.PI, cross: sw * P.xp,
           tail: sw * 0.35, pad: sw * 1.10, gap: CAP * P.gap};
 }
 
@@ -260,8 +303,14 @@ function buildLockup(){
     "stroke-dasharray":`${(g.ghost*2.6).toFixed(1)} ${(g.ghost*2.3).toFixed(1)}`}));
   svg.appendChild(el("path", {d:sine(g.A, g.L, 2, {mirror:true}), stroke:mk,
     "stroke-width":g.sw, "stroke-linecap":"round"}));
-  if (P.dots) for (let i = 0; i < 2; i++)
-    svg.appendChild(el("circle", {cx:(i + 0.5) * g.L, cy:(i % 2 ? g.A : -g.A), r:g.dot, fill:mk}));
+  const on = [P.crest, P.trough];
+  for (let i = 0; i < 2; i++){
+    if (!on[i]) continue;
+    const cx = (i + 0.5) * g.L, cy = i % 2 ? g.A : -g.A;
+    svg.appendChild(P.mark === "dot"
+      ? el("circle", {cx, cy, r:g.dot, fill:mk})
+      : crossAt(cx, cy, g, mk));
+  }
 
   const fs = CAP * 1000 / 700;                      // cap 700 per 1000 em
   const t = el("text", {x:2*g.L + g.gap, y:CAP/2, fill:"var(--ink)",
@@ -271,11 +320,23 @@ function buildLockup(){
   return {svg, g, fs};
 }
 
+/* The crossing at a node, translated to the antinode: the rising phase and the
+   falling one, the same two lines the wave is already drawn from. */
+function crossAt(cx, cy, g, mk){
+  const grp = el("g", {transform:`translate(${cx.toFixed(2)} ${cy.toFixed(2)})`});
+  for (const sgn of [1, -1])
+    grp.appendChild(el("path", {d:arcOf(g.A, g.L * P.xa, -g.xh, g.xh, sgn, 2), stroke:mk,
+      "stroke-width":g.cross, "stroke-linecap":"round"}));
+  return grp;
+}
+
 function layout(svg, g, fs){
   let wlen = 0;
   const t = svg.querySelector("text");
   try { wlen = t.getComputedTextLength() - P.tr * fs; } catch(e) { wlen = 1000; }
-  const half = g.A + g.sw/2 + g.pad, left = g.tail + g.pad;
+  const shown = P.crest || P.trough;
+  const reach = !shown ? 0 : P.mark === "dot" ? g.dot : g.xr + g.cross/2;
+  const half = g.A + Math.max(g.sw/2, reach) + g.pad, left = g.tail + g.pad;
   const w = 2*g.L + g.gap + wlen + left;
   svg.setAttribute("viewBox", `${-left} ${-half} ${w} ${2*half}`);
   return {w, h: 2*half};
@@ -336,12 +397,21 @@ function render(){
   set("w", n(g.sw), `${P.w.toFixed(3)} × amplitude · ${(g.sw/WORD_PEN).toFixed(2)}× the word`);
   set("gh", n(g.ghost), `${P.gh.toFixed(2)} × mark pen`);
   set("ru", n(g.rule), `${P.ru.toFixed(2)} × mark pen`);
-  set("dt", n(g.dot), `radius · ${(g.dot*2/g.sw).toFixed(2)}× the stroke across`);
+  set("dt", P.mark === "dot" ? n(g.dot) : n(2*g.xr),
+      P.mark === "dot" ? `radius · ${(g.dot*2/g.sw).toFixed(2)}× the stroke across`
+                       : `the × measures ${n(2*g.xh)} × ${n(2*g.xr)}`);
+  set("xp", n(g.cross), `${P.xp.toFixed(2)} × mark pen`);
+  set("xa", P.xa.toFixed(2), P.xa === 1 ? "the wave's own crossing angle"
+      : `${(P.xa*100-100).toFixed(0)}% wider than the wave crosses`);
+  for (const id of ["xp-ctl","xa-ctl"])
+    document.getElementById(id).style.display = P.mark === "cross" ? "grid" : "none";
   set("amp", n(2*g.A), `${(2*P.amp).toFixed(2)} cap heights tall`);
   set("lob", P.lob.toFixed(2), `lobe ${n(g.L)} × ${n(g.A)}`);
   set("tr", P.tr.toFixed(3), `em · mark is ${n(2*g.L)} wide`);
   set("gap", P.gap.toFixed(2), `cap heights · ${n(g.gap)} units`);
 
+  const where = !(P.crest || P.trough) ? "                # neither antinode marked"
+    : P.crest && P.trough ? "" : `                # ${P.crest ? "crest" : "trough"} only`;
   document.getElementById("out").innerHTML =
     `<span class="k">KCAP</span>   = 100.0
 <span class="k">KA</span>     = KCAP * ${P.amp.toFixed(3)}
@@ -349,23 +419,42 @@ function render(){
 <span class="k">KSW</span>    = round(KA * ${P.w.toFixed(3)}, 2)      # ${n(g.sw)} — ${(g.sw/WORD_PEN).toFixed(2)}x the word
 <span class="k">KGHOST</span> = round(KSW * ${P.gh.toFixed(2)}, 2)
 <span class="k">KRULE</span>  = round(KSW * ${P.ru.toFixed(2)}, 2)
-<span class="k">KDOT</span>   = round(KSW * ${P.dt.toFixed(2)}, 2)
+<span class="k">KMARK</span>  = ${JSON.stringify(P.mark)}${where}
+${P.mark === "dot"
+  ? `<span class="k">KDOT</span>   = round(KSW * ${P.dt.toFixed(2)}, 2)`
+  : `<span class="k">KXSIZE</span> = round(KSW * ${(g.xr/g.sw).toFixed(3)}, 2)      # ${n(g.xr)} — half-height, cut off the wave
+<span class="k">KXPEN</span>  = round(KSW * ${P.xp.toFixed(2)}, 2)
+<span class="k">KXSPLAY</span> = ${P.xa.toFixed(2)}`}
 <span class="k">ARCH_N</span> = ${CURVES.find(c => c[1] === P.curve)[0]}      # in glyphs.py — recuts the face
 <span class="k">KTRACK</span> = ${P.tr.toFixed(3)}
 <span class="k">KGAP</span>   = KCAP * ${P.gap.toFixed(2)}`;
 }
 
-const BIND = ["w","gh","ru","dt","amp","lob","tr","gap"];
+const BIND = ["w","gh","ru","dt","xp","xa","amp","lob","tr","gap"];
 for (const k of BIND){
   const i = document.getElementById(k);
   i.value = P[k];
   i.addEventListener("input", () => { P[k] = parseFloat(i.value); render(); });
 }
-for (const [id, key] of [["t-ghost","ghost"],["t-rule","rule"],["t-dots","dots"],["t-1c","oneink"]]){
+for (const [id, key] of [["t-ghost","ghost"],["t-rule","rule"],["t-crest","crest"],
+                         ["t-trough","trough"],["t-1c","oneink"]]){
   const c = document.getElementById(id);
   c.checked = P[key];
   c.addEventListener("change", () => { P[key] = c.checked; render(); });
 }
+const mw = document.getElementById("mark");
+for (const [label, kind] of MARKS){
+  const b = document.createElement("button");
+  b.type = "button"; b.textContent = label;
+  b.addEventListener("click", () => {
+    P.mark = kind;
+    [...mw.children].forEach(c => c.classList.toggle("on", c === b));
+    render();
+  });
+  if (kind === P.mark) b.classList.add("on");
+  mw.appendChild(b);
+}
+
 const cw = document.getElementById("curve");
 for (const [label, fam, word] of CURVES){
   const b = document.createElement("button");
