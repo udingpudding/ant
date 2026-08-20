@@ -36,6 +36,7 @@ SHOULDER = 0.48 * CAP  # ink height of the arch's dome, traced off the sketch's 
 NJ = CAP - SHOULDER    # where the dome lands on the legs
 BARY = 0.40 * CAP      # the A's bar. in the logo this is the axis
 MIDY = 0.50 * CAP      # E, F, H crossbars
+E_OPEN = 52.0          # degrees off horizontal to the E's terminals
 
 DESCENDERS = {"comma", "semicolon", "parenleft", "parenright", "Q"}
 
@@ -134,19 +135,23 @@ def g_D():
 
 
 def g_E():
-    return (vstem(XL, 0, CAP) + hbar(YT, XL, R) + hbar(YB, XL, R)
-            + hbar(MIDY, XL, R - GW * 0.15))
+    """The sketch's E: a C-form, closed on the left, open on the right, with a
+    middle arm that stops short of the bowl's widest point so all three
+    right-hand ends line up on one vertical.
+
+    That alignment is what makes it read as an E rather than a euro sign, and
+    the opening is what keeps it off a theta — which a closed bowl reads as at
+    every weight tried.
+    """
+    t = math.cos(rad(E_OPEN))
+    return cring(E_OPEN, 360 - E_OPEN) + hbar(MIDY, XM - AX, XM + AX * t)
 
 
 def g_Ealt():
-    """The lower sketch's E: a round bowl with a bar through its middle.
-
-    Drawn closed it renders as a theta at every size, which is the one thing it
-    must not do — so the bowl breaks open on the right and the bar runs out to
-    the full width. Round, but unmistakably a letter.
-    """
-    rx = AX * 0.88
-    return cring(24, 336, rx) + hbar(MIDY, XM - rx + W / 2, R)
+    """The upper sketch's E: spine and three arms, the conventional cut. Kept
+    on ss01 for anywhere the round one is too much."""
+    return (vstem(XL, 0, CAP) + hbar(YT, XL, R) + hbar(YB, XL, R)
+            + hbar(MIDY, XL, R - GW * 0.15))
 
 
 def g_F():
@@ -401,11 +406,89 @@ GLYPHS = {
     "ampersand": g_ampersand, "E.alt": g_Ealt,
 }
 
-WIDE = {"M": 1.20, "W": 1.24}
-NARROW = {"space": 0.62, "period": 0.46, "comma": 0.46, "colon": 0.46,
-          "semicolon": 0.46, "hyphen": 0.62, "quotesingle": 0.42,
-          "quotedbl": 0.62, "exclam": 0.46, "parenleft": 0.56,
-          "parenright": 0.56, "slash": 0.70, "emdash": 1.20}
+# ---------------------------------------------------------------- spacing
+# One advance for every glyph is what makes a monoline face look gappy: a bare
+# stem like the I floats in a box built for an O. So each glyph is fitted to
+# its own ink, and the sidebearing is chosen by what sits at the edge —
+# a flat stem needs the most air, a curve meets the neighbour at a single point
+# and needs less, an open corner (the underside of a T, the shoulder of an L)
+# already carries its own white and needs least of all.
+FLAT = SB                  # a vertical stem at the edge
+ROUND = round(SB * 0.64)   # a curve: the extreme is one point, not a wall
+OPEN = round(SB * 0.72)    # a diagonal or an open corner
+
+SIDE = {
+    "A": (FLAT, FLAT), "B": (FLAT, ROUND), "C": (ROUND, round(ROUND * 0.75)),
+    "D": (FLAT, ROUND), "E": (round(ROUND * 1.14), round(ROUND * 0.60)),
+    "F": (FLAT, round(OPEN * 0.45)), "G": (ROUND, round(FLAT * 0.80)),
+    "H": (FLAT, FLAT), "I": (FLAT, FLAT), "J": (round(OPEN * 0.60), FLAT),
+    "K": (FLAT, round(OPEN * 0.70)), "L": (FLAT, round(OPEN * 0.40)),
+    "M": (FLAT, FLAT), "N": (FLAT, FLAT), "O": (ROUND, ROUND),
+    "P": (FLAT, round(OPEN * 0.70)), "Q": (ROUND, ROUND),
+    "R": (FLAT, round(OPEN * 0.80)), "S": (round(ROUND * 0.85), round(ROUND * 0.85)),
+    "T": (round(OPEN * 0.50), round(OPEN * 0.50)), "U": (FLAT, FLAT),
+    "V": (round(OPEN * 0.60), round(OPEN * 0.60)),
+    "W": (round(OPEN * 0.60), round(OPEN * 0.60)),
+    "X": (round(OPEN * 0.75), round(OPEN * 0.75)),
+    "Y": (round(OPEN * 0.55), round(OPEN * 0.55)),
+    "Z": (round(OPEN * 0.80), round(OPEN * 0.80)),
+    "E.alt": (FLAT, round(OPEN * 0.45)),
+    "period": (round(FLAT * 0.60), round(FLAT * 0.60)),
+    "comma": (round(FLAT * 0.60), round(FLAT * 0.60)),
+    "colon": (round(FLAT * 0.60), round(FLAT * 0.60)),
+    "semicolon": (round(FLAT * 0.60), round(FLAT * 0.60)),
+    "exclam": (round(FLAT * 0.70), round(FLAT * 0.70)),
+    "quotesingle": (round(FLAT * 0.60), round(FLAT * 0.60)),
+    "quotedbl": (round(FLAT * 0.60), round(FLAT * 0.60)),
+    "hyphen": (round(FLAT * 0.55), round(FLAT * 0.55)),
+    "endash": (round(FLAT * 0.55), round(FLAT * 0.55)),
+    "emdash": (round(FLAT * 0.40), round(FLAT * 0.40)),
+    "slash": (round(OPEN * 0.35), round(OPEN * 0.35)),
+    "parenleft": (round(FLAT * 0.70), round(OPEN * 0.45)),
+    "parenright": (round(OPEN * 0.45), round(FLAT * 0.70)),
+    "question": (ROUND, round(ROUND * 0.80)),
+    "ampersand": (round(OPEN * 0.80), round(OPEN * 0.70)),
+}
+SPACE_ADV = round(ADV * 0.58)
+FIGURES = ("zero", "one", "two", "three", "four", "five",
+           "six", "seven", "eight", "nine")
+
+
+def _bounds(cs):
+    xs = [p[0] for c in cs for p in c.points()]
+    return (min(xs), max(xs)) if xs else (0.0, 0.0)
+
+
+def _tabular():
+    """Figures share one advance so columns of them line up — the face is meant
+    for readouts as much as headlines."""
+    w = 0.0
+    for n in FIGURES:
+        x0, x1 = _bounds(GLYPHS[n]())
+        w = max(w, ROUND + (x1 - x0) + ROUND)
+    return round(w)
+
+
+TAB = None      # resolved on first use; building every figure at import is slow
+
+
+def _space(name, cs):
+    """Fit the glyph to its own ink and return (contours, advance)."""
+    global TAB
+    if not cs:
+        return cs, SPACE_ADV
+    x0, x1 = _bounds(cs)
+    if name in FIGURES:
+        if TAB is None:
+            TAB = _tabular()
+        adv, dx = TAB, (TAB - (x1 - x0)) / 2 - x0
+    else:
+        l, r = SIDE.get(name, (FLAT, FLAT))
+        adv, dx = round(l + (x1 - x0) + r), l - x0
+    if abs(dx) > 0.01:
+        cs = [c.transform(lambda p, d=dx: (p[0] + d, p[1])) for c in cs]
+    return cs, adv
+
 
 CMAP = {ord(c): c for c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"}
 CMAP.update({ord(c): n for c, n in zip("0123456789", [
@@ -420,7 +503,8 @@ CMAP.update({ord(c.lower()): c for c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"})
 
 
 def advance(name):
-    return round(ADV * WIDE.get(name, NARROW.get(name, 1.0)))
+    build(name)
+    return _cache[name][2]
 
 
 _cache = {}
@@ -431,6 +515,8 @@ def build(name):
     nonzero fill unions the overlapping strokes; holes are wound against them."""
     if name not in _cache:
         _err.clear()
-        cs = GLYPHS[name]()
-        _cache[name] = ([c.wind(not c.hole) for c in cs], max(_err) if _err else 0.0)
-    return _cache[name]
+        cs = [c.wind(not c.hole) for c in GLYPHS[name]()]
+        err = max(_err) if _err else 0.0
+        cs, adv = _space(name, cs)
+        _cache[name] = (cs, err, adv)
+    return _cache[name][0], _cache[name][1]

@@ -11,6 +11,7 @@ cd "$(dirname "$0")"
 python3 antinode_font.py          # cuts ../font from glyphs.py
 python3 build-antinode.py         # rewrites ../logos and ../type-study
 python3 specimen.py               # rewrites ../specimen
+python3 bench.py                  # recuts ../bench.html around the new face
 
 cd ..
 for d in logos type-study specimen; do

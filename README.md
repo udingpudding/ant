@@ -137,8 +137,22 @@ node a sine leaves the axis at 63° and a letter has to stand at 90°. `specimen
 | metrics | 1000 upem, cap 700, pen **66** (0.094 cap), width 560 (0.80 cap), sidebearing 91 |
 | method | skeletons miter-offset to constant width, refitted as cubics |
 | accuracy | band width 66.000 units at every sample; worst curve fit **0.44 units**, 0.06% of cap |
-| features | `ss01` swaps in the round E from your lower sketch; `kern` carries 16 pairs |
+| features | `ss01` swaps in the conventional square E; `kern` carries 16 pairs |
+| spacing | fitted per glyph, not one advance for all — see below |
 | overlaps | removed with skia-pathops — clean cuts, not contours relying on winding order |
+
+**The E is the sketch's**: a C-form, closed left, open right, with a middle arm that stops short
+of the bowl's widest point so all three right-hand ends line up on one vertical. That alignment
+is what makes it an E and not a euro sign; the opening is what keeps it off a theta, which a
+closed bowl reads as at every weight tried. The conventional spine-and-three-arms cut is on
+`ss01`.
+
+**Spacing is fitted per glyph.** One advance for every glyph is what makes a monoline face look
+gappy — a bare stem like the I floats in a box built for an O. Each glyph is now fitted to its own
+ink, with the sidebearing chosen by what sits at the edge: a flat stem needs the most air, a curve
+meets its neighbour at a single point and needs less, an open corner already carries its own white
+and needs least. The I went from a 742-unit advance to 248. Measured over ANTINODE — mean optical
+gap 176 units, spread **4%** of the mean. Figures are tabular so columns line up.
 
 Seven letters come straight off your paper — **A N T I O D E**. The other nineteen are
 extrapolated to the same rules; **B G K Q R S W** are the ones to look hardest at. The one place
