@@ -125,9 +125,16 @@ punctuation, 54 glyphs over 78 codepoints. Lowercase is mapped to the caps so it
 character. Built from scratch with fontTools; there is no source in Glyphs or FontForge, because
 there are no hand-placed points to keep — `build/glyphs.py` *is* the source.
 
-The system it buys: one superellipse (exponent 2.5) does five jobs — the wave's lobe, the N, the
-A (the same arch with a bar, which is exactly what the axis does to the opening lens), the U
-inverted, and D's bowl turned a quarter. `specimen/parts.svg` draws it.
+The system it buys: **one superellipse (exponent 2.5) draws the entire face.** The wave's lobe,
+the N, the A (the same arch with a bar, which is exactly what the axis does to the opening lens),
+the U inverted, D's bowl turned a quarter — and, since the round letters were moved off circles,
+the O, C, G, Q, S, E and every digit bowl as well. There is no ellipse left in the alphabet; dots
+stay circular, being dots. `specimen/parts.svg` draws it.
+
+That last move mattered more than it sounds. With the round group on circles and the stem-and-bowl
+group on superellipses, the face was two alphabets in a trenchcoat — an O and a D side by side had
+visibly different curves. Now every curve is the same one at a different scale and sweep, which is
+the whole argument for drawing a face rather than picking one.
 
 Why a superellipse and not the sine itself: over the same span the two nearly agree, but at the
 node a sine leaves the axis at 63° and a letter has to stand at 90°. `specimen/arch.svg`.
@@ -137,6 +144,7 @@ node a sine leaves the axis at 63° and a letter has to stand at 90°. `specimen
 | metrics | 1000 upem, cap 700, pen **66** (0.094 cap), width 560 (0.80 cap), sidebearing 91 |
 | method | skeletons miter-offset to constant width, refitted as cubics |
 | accuracy | band width 66.000 units at every sample; worst curve fit **0.44 units**, 0.06% of cap |
+| counters | closed shapes are stroked as a band — outer contour plus a real hole, not two overlapping shapes |
 | features | `ss01` swaps in the conventional square E; `kern` carries 16 pairs |
 | spacing | fitted per glyph, not one advance for all — see below |
 | overlaps | removed with skia-pathops — clean cuts, not contours relying on winding order |
