@@ -14,6 +14,11 @@ typeface rather than picked by eye. Re-running regenerates all of it.
     J  the drawing     three lobes and their mirrors, the name inside them,
                        set in Antinode - a face drawn for it, because the
                        sketch's N is an arch no shipping font has
+    K  working weight  C's reading, one wavelength, the mark 4x the word
+    L  on one line     K's family at the bench's numbers: light, the crest
+                       marked with a x cut from the wave, rule under the name
+    M  the lobe as A   the same, with the lobe standing in the A's slot - the
+                       chosen cut, and the one that ships as PNG
 
 All four set the word in Cormorant Garamond Light. An Archivo family (D-G)
 was cut and dropped — too heavy, and it read as type beside a wave rather
@@ -800,7 +805,7 @@ def kstacked(ghost=True, rule=True, colour=RUST, ink=INK):
     return svg(KLOBES * KL + 2 * left, half + y + KPAD, "\n".join(body), -left, -half)
 
 
-def kicon(colour=RUST):
+def kicon(colour=RUST, amp=None, lobe=None, pen=None):
     """Redrawn for small sizes, and cropped to one antinode — the singular of
     the name.
 
@@ -812,13 +817,14 @@ def kicon(colour=RUST):
     off — a dash breaks up and a dot fuses with the crest long before the
     curve gives out.
     """
-    sw = round(KSW * 0.72, 2)
+    amp, lobe = KA if amp is None else amp, KL if lobe is None else lobe
+    sw = round((KSW if pen is None else pen) * 0.72, 2)
     rule = round(sw * 0.42, 2)
     over, pad = sw * 0.9, sw * 0.5
-    body = (stroked([f"M {-over:.1f} 0 L {KL + over:.1f} 0"], sw=rule, cap="round", color=colour)
-            + "\n" + stroked([closed_lens(KA, KL, horizontal=True)], sw=sw, color=colour))
-    half = KA + sw / 2 + pad
-    return svg(KL + 2 * over + 2 * pad, 2 * half, body, -(over + pad), -half)
+    body = (stroked([f"M {-over:.1f} 0 L {lobe + over:.1f} 0"], sw=rule, cap="round", color=colour)
+            + "\n" + stroked([closed_lens(amp, lobe, horizontal=True)], sw=sw, color=colour))
+    half = amp + sw / 2 + pad
+    return svg(lobe + 2 * over + 2 * pad, 2 * half, body, -(over + pad), -half)
 
 
 def kword(ink=INK, alt=()):
@@ -857,6 +863,114 @@ files.update({
     "antinode-K-icon-1c.svg": kicon(colour=INK),
     "antinode-K-word.svg": kword(),
 })
+
+
+# ------------------------------------ L and M: the bench's spec, one line
+# The K family at the bench's numbers — lighter, the crest marked with a ×
+# cut from the wave instead of a dot — laid out two ways. L: the axis is the
+# baseline, the rule runs past the wave and under the whole name. M: the
+# lobe stands in the A's slot, spaced like a letter, and NTINODE runs out of
+# it along the same line.
+#
+# The numbers are the bench's Light preset and its cross, pasted from the spec
+# it prints — retune there, then paste here. Three are deliberate departures
+# from the bench's defaults: LTRACK 0 (bench 0.11), MLEG 0 (bench 0.14), and
+# only the crest marked (the bench marks the trough as well).
+LCAP = 100.0
+LA = LCAP * 1.000
+LL = LA * 2.00
+LSW = round(LA * 0.095, 2)           # 9.50 — 1.01x the word
+LGHOST = round(LSW * 0.42, 2)
+LGDASH = f"{LGHOST * 2.6:.1f} {LGHOST * 2.3:.1f}"
+LRULE = round(LSW * 0.26, 2)
+LXSIZE = round(LSW * 1.840, 2)       # 17.48 — the ×'s half-height, cut off the wave
+LXPEN = round(LSW * 0.48, 2)
+LXSPLAY = 1.40                       # the arms cross wider than the wave does
+LXHALF = LXSPLAY * LL * math.asin(LXSIZE / LA) / math.pi   # the ×'s half-width
+LTRACK = 0.000
+LGAP = LCAP * 1.15
+LTAIL = LCAP * 0.30                  # the rule past the wave and the word
+LPAD = LSW * 1.10
+LREACH = max(LSW / 2, LXSIZE + LXPEN / 2)   # how far the crest's ink stands off the axis
+FS = LCAP * glyphs.UPEM / glyphs.CAP
+MSTART = LL + LSW / 2 + (LTRACK + glyphs.SB / glyphs.UPEM) * FS   # the lobe spaced as a letter
+MLEG = LL * 0.00
+
+
+def arc(A, L, x0, x1, sgn, segs, cx=0.0, cy=0.0):
+    """One span of the sine, x0..x1, as cubics carrying its tangents. The
+    cross arms are cut from here, which is why they curve."""
+    k = math.pi / L
+    off = lambda t: sgn * A * math.sin(k * t)
+    dof = lambda t: sgn * A * k * math.cos(k * t)
+    st = (x1 - x0) / segs
+    d = [f"M {cx + x0:.2f} {cy + off(x0):.2f}"]
+    for i in range(segs):
+        a = x0 + i * st
+        b = a + st
+        d.append(f"C {cx + a + st / 3:.2f} {cy + off(a) + dof(a) * st / 3:.2f} "
+                 f"{cx + b - st / 3:.2f} {cy + off(b) - dof(b) * st / 3:.2f} "
+                 f"{cx + b:.2f} {cy + off(b):.2f}")
+    return " ".join(d)
+
+
+def lcross(cx, cy, colour):
+    """The crossing at a node, moved to the antinode: the rising phase and the
+    falling one, the same two lines the wave is drawn from."""
+    return stroked([arc(LA, LL * LXSPLAY, -LXHALF, LXHALF, s, 2, cx, cy) for s in (1, -1)],
+                   sw=LXPEN, cap="round", color=colour)
+
+
+def llockup(colour=RUST, ink=INK, ghost=True, rule=True):
+    x = 2 * LL + LGAP
+    d, wlen = setter.word(WORD, LCAP, LTRACK, x=x, y=0)          # y = 0: on the line
+    right = x + wlen
+    body = [stroked([f"M {-LTAIL:.1f} 0 L {right + LTAIL:.2f} 0"], sw=LRULE, cap="round", color=colour) if rule else "",
+            stroked([sine(LA, LL, 2, horizontal=True)], sw=LGHOST, cap="round", color=colour, dash=LGDASH) if ghost else "",
+            stroked([sine(LA, LL, 2, mirror=True, horizontal=True)], sw=LSW, cap="round", color=colour),
+            lcross(0.5 * LL, -LA, colour),
+            f'<path d="{d}" fill="{ink}"/>']
+    top = max(LA + LREACH, LCAP) + LPAD
+    bot = LA + LREACH + LPAD
+    return svg(right + 2 * LTAIL + 2 * LPAD, top + bot, "\n".join(body), -(LTAIL + LPAD), -top)
+
+
+def mlockup(colour=RUST, ink=INK, ghost=False, rule=False):
+    """Bare by default — the chosen cut is the lobe, the ×, and the name."""
+    d, wlen = setter.word(WORD[1:], LCAP, LTRACK, x=MSTART, y=0)
+    right = MSTART + wlen
+    lft = max(LTAIL, MLEG + LSW / 2)
+    body = [stroked([f"M {-lft:.2f} 0 L {right + LTAIL:.2f} 0"], sw=LRULE, cap="round", color=colour) if rule else "",
+            stroked([sine(LA, LL, max(1, round(right / LL)), horizontal=True)],   # carried, full
+                    sw=LGHOST, cap="round", color=colour, dash=LGDASH) if ghost else "",
+            stroked([arc(LA, LL, -MLEG, LL + MLEG, -1, 8)], sw=LSW, cap="round", color=colour),
+            lcross(0.5 * LL, -LA, colour),
+            f'<path d="{d}" fill="{ink}"/>']                    # type last: the wave passes behind
+    top = max(LA + LREACH, LCAP) + LPAD
+    bot = (LA + LREACH if ghost else LSW / 2) + LPAD
+    left = lft + LPAD
+    return svg(right + LTAIL + left + LPAD, top + bot, "\n".join(body), -left, -top)
+
+
+# The spec's ARCH_N is 3.2 — softer shoulders than the shipped 2.5. Cut only
+# these marks at it, the way the bench does: a global change re-spaces the
+# glyphs and J's word no longer measures one period.
+LARCH_N = 3.2
+_prev, glyphs.ARCH_N = glyphs.ARCH_N, LARCH_N
+glyphs._cache.clear(); glyphs.TAB = None
+try:
+    files.update({
+        "antinode-L-lockup.svg": llockup(),
+        "antinode-L-lockup-1c.svg": llockup(colour=INK),
+        "antinode-M-lockup.svg": mlockup(),
+        "antinode-M-lockup-1c.svg": mlockup(colour=INK),
+        "antinode-M-carried.svg": mlockup(ghost=True, rule=True),
+        "antinode-L-icon.svg": kicon(amp=LA, lobe=LL, pen=LSW),
+        "antinode-L-icon-1c.svg": kicon(colour=INK, amp=LA, lobe=LL, pen=LSW),
+    })
+finally:
+    glyphs.ARCH_N = _prev
+    glyphs._cache.clear(); glyphs.TAB = None
 
 
 def diagram():

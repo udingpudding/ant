@@ -8,8 +8,34 @@ photo and every mark are inlined, so it works from `file://` with nothing served
 
 ## What is here
 
-`logos/` holds the vector masters. **J** and **K** are set in Antinode, the face drawn for them
-(`font/`); everything else is Cormorant Garamond Light.
+`logos/` holds the vector masters. **J**, **K** and **L/M** are set in Antinode, the face drawn
+for them (`font/`); everything else is Cormorant Garamond Light.
+
+**L/M — the K family at the bench's numbers.** The pick. K's construction cut lighter — the
+mark's pen is the word's pen, 1.01× — with the crest marked by a small × cut from the wave
+itself (the rising and falling phases, the same two lines the wave is drawn from) instead of a
+dot. Laid out two ways. **L** puts the axis on the baseline: the rule runs past the wave and
+under the whole name. **M** puts the lobe in the A's slot, spaced as a letter, and NTINODE runs
+out of it along the same line — the sketch's own reading, at a weight that can stand beside
+other type. M is the one that ships.
+
+These marks alone are cut at a softer arch than the face (superellipse exponent 3.2 against the
+shipping 2.5); the override is local to them, because changing it globally re-spaces the glyphs
+and J's word no longer measures one period.
+
+The numbers are the bench's *Light* preset and its cross, pasted from the spec it prints. Three
+depart from the bench's defaults on purpose: tracking 0 (bench 0.11), no leg on M's lobe (bench
+0.14), and only the crest marked (the bench marks the trough too). Retune on the bench, then
+paste into `build-antinode.py`.
+
+| file | |
+|---|---|
+| `M-lockup` | **primary** — the lobe as the A, bare |
+| `M-carried` | with the ghosted phase carried under the name, and the rule |
+| `L-lockup` | the axis as baseline, rule under the whole name |
+| `L-icon` | one antinode, redrawn at this family's numbers |
+| `*-1c` | each of the above in one ink |
+| `*.png` | each of the above rasterised at 4×, transparent |
 
 **K — two antinodes, at working weight.** C's reading — one phase solid, the opposite ghosted,
 the antinode marked — cut to a single wavelength and drawn at the weight of the logo already in
@@ -125,7 +151,7 @@ punctuation, 54 glyphs over 78 codepoints. Lowercase is mapped to the caps so it
 character. Built from scratch with fontTools; there is no source in Glyphs or FontForge, because
 there are no hand-placed points to keep — `build/glyphs.py` *is* the source.
 
-The system it buys: one superellipse (exponent 2.5) does the arch work — the wave's lobe, the N,
+The system it buys: one superellipse (exponent 2.5; L/M alone are cut at 3.2) does the arch work — the wave's lobe, the N,
 the A (the same arch with a bar, which is exactly what the axis does to the opening lens), the U
 inverted, D's bowl turned a quarter, and the E's. The round letters — O, C, G, Q, S and the digit
 bowls — are ellipses. `specimen/parts.svg` draws it.
@@ -203,6 +229,10 @@ the steps by hand if you like, but note **svgo only honours a single `-f` per in
 passing three folders silently optimises only the last, and `build-antinode.py` rewrites
 `type-study/` as well as `logos/`, so both need a pass after it.
 
+The last step rasterises the L/M cuts to PNG at 4× with headless Chrome (`CHROME=` to point it
+elsewhere; skipped with a warning if absent). Chrome and not ImageMagick because ImageMagick's
+own SVG parser silently drops the rust wave.
+
 `skia-pathops` is optional. Without it the fonts still render correctly — nonzero winding unions
 same-direction contours — but the build says so instead of claiming a clean cut.
 
@@ -212,9 +242,8 @@ pen or the width in `glyphs.py` and the whole face re-cuts — and the wordmark 
 
 ## Still to do
 
-Waiting on a direction being picked, since there is no sense cutting these four times
-over: PNG exports at set sizes, a one-colour reversed set, and clear-space plus
-minimum-size rules.
+A one-colour reversed set, and clear-space plus minimum-size rules, for M now that it is
+picked.
 
 ## Type
 
