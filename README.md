@@ -33,7 +33,7 @@ paste into `build-antinode.py`.
 | `M-lockup` | **primary** — the lobe as the A, bare |
 | `M-carried` | with the ghosted phase carried under the name, and the rule |
 | `L-lockup` | the axis as baseline, rule under the whole name |
-| `L-icon` | one antinode, redrawn at this family's numbers |
+| `L-icon` | one antinode at this family's proportions, redrawn at the icon pen |
 | `*-1c` | each of the above in one ink |
 | `*.png` | each of the above rasterised at 4×, transparent |
 
@@ -230,7 +230,7 @@ passing three folders silently optimises only the last, and `build-antinode.py` 
 `type-study/` as well as `logos/`, so both need a pass after it.
 
 The last step rasterises the L/M cuts to PNG at 4× with headless Chrome (`CHROME=` to point it
-elsewhere; skipped with a warning if absent). Chrome and not ImageMagick because ImageMagick's
+elsewhere; the build fails if it is absent, since the page advertises the PNGs). Chrome and not ImageMagick because ImageMagick's
 own SVG parser silently drops the rust wave.
 
 `skia-pathops` is optional. Without it the fonts still render correctly — nonzero winding unions

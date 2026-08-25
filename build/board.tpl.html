@@ -56,7 +56,7 @@
   /* ---- hero ---- */
   .hero { display: flex; flex-direction: column; gap: 1.8rem; padding-block: clamp(3.5rem, 10vw, 8rem) clamp(3rem, 7vw, 5rem); }
   .hero .showpiece { margin-top: 1rem; }
-  .hero .showpiece svg { width: 100%; max-width: 760px; height: auto; display: block; }
+  .hero .showpiece svg { width: 100%; max-width: 1000px; height: auto; display: block; }
 
   /* ---- plates ---- */
   .plate { display: flex; flex-direction: column; gap: 1.6rem; }
@@ -151,7 +151,8 @@
     <h1>The lobe is the A.<br><em>One pen, one line.</em></h1>
     <p class="lede">The wave's opening crest stands in the A's slot, spaced like a letter, and the
       name runs out of it along the same line — mark and word drawn with the same pen. Set in
-      Antinode — a face drawn for this mark, because your sketch uses a letter no font ships.</p>
+      Antinode — a face drawn for this mark, because your sketch uses a letter no font ships —
+      cut here at a slightly softer arch than the face below.</p>
     <div class="showpiece">{{M-lockup}}</div>
   </header>
 
@@ -305,7 +306,8 @@
       smudge — the renderer has nothing left to draw. So each icon is redrawn rather than resized:
       same curve, tighter crop, stroke roughly four times heavier, dashes dropped. The size rows on
       the plates are the icon cut at true pixel sizes; the large lockups are the display cut. Use the
-      display cut above about 80&nbsp;px and the icon cut below it.</p>
+      display cut above about 80&nbsp;px and the icon cut below it — except M, which has no heavy
+      element to carry it and hands over at about 160&nbsp;px.</p>
   </section>
 
   <section class="col" style="gap:1.6rem">
@@ -385,14 +387,12 @@
       <div>
         <h3>Not built yet</h3>
         <ul>
-          <li><em>PNG exports at set sizes</em></li>
           <li><em>a one-colour reversed set</em></li>
           <li><em>clear-space + minimum size</em></li>
         </ul>
       </div>
     </div>
-    <p class="note">Those three wait on you picking a direction — no sense cutting an export set four
-      times over. Vector masters are black on transparent; swapping <code>#141312</code> for anything
+    <p class="note">Those two are next, now that M is picked. Vector masters are black on transparent; swapping <code>#141312</code> for anything
       else is one find-and-replace.</p>
     <pre>python3 -m pip install fonttools brotli skia-pathops
 ./build/rebuild.sh   # font, marks, specimens, svgo, page — in the one order that works</pre>

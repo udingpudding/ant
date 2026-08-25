@@ -27,7 +27,9 @@ python3 page.py                   # rewrites ../index.html
 # Chrome, not ImageMagick: IM's built-in SVG parser silently drops the rust
 # wave. No --user-data-dir — with a fresh one Chrome hangs; without it a
 # second instance renders fine while Chrome is open. The rm + test -s pair is
-# there so a Chrome that exits 0 without drawing anything fails the build.
+# there so a Chrome that exits 0 without drawing anything fails the build,
+# and a missing Chrome fails it too: the page advertises the PNGs, so stale
+# ones must not ship under a green build.
 # ponytail: one scale (4x); per-size exports when a spec asks for them.
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 if [ -x "$CHROME" ]; then
@@ -46,5 +48,6 @@ if [ -x "$CHROME" ]; then
   done
   printf '  png     %s rasterised at 4x\n' "$n"
 else
-  echo "png: Chrome not found at $CHROME — PNGs not refreshed (set CHROME=...)" >&2
+  echo "png: Chrome not found at $CHROME — set CHROME=/path/to/chrome" >&2
+  exit 1
 fi

@@ -965,8 +965,11 @@ try:
         "antinode-M-lockup.svg": mlockup(),
         "antinode-M-lockup-1c.svg": mlockup(colour=INK),
         "antinode-M-carried.svg": mlockup(ghost=True, rule=True),
-        "antinode-L-icon.svg": kicon(amp=LA, lobe=LL, pen=LSW),
-        "antinode-L-icon-1c.svg": kicon(colour=INK, amp=LA, lobe=LL, pen=LSW),
+        "antinode-M-carried-1c.svg": mlockup(colour=INK, ghost=True, rule=True),
+        # the icon keeps the family's proportions but takes the icon pen: at
+        # the lockup's own pen it is a hairline by 32 px
+        "antinode-L-icon.svg": kicon(amp=LA, lobe=LL),
+        "antinode-L-icon-1c.svg": kicon(colour=INK, amp=LA, lobe=LL),
     })
 finally:
     glyphs.ARCH_N = _prev
