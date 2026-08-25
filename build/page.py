@@ -62,6 +62,23 @@ def group(title, blurb):
   </section>'''
 
 
+plate_m = plate("M", "The lobe as the A",
+    "K's family at the bench's numbers — lighter, the crest marked with a small &times; cut "
+    "from the wave itself rather than a dot — and the wave's opening lobe moved into the A's "
+    "slot, spaced like a letter, so NTINODE runs out of it along the same line. The mark's pen "
+    "is the word's pen: nothing here is heavier than anything else. Shown bare, which is the "
+    "chosen cut; then carried, with the ghost and the rule; then L, the same family laid on one "
+    "rule under the whole name. These marks alone are cut at a softer arch (exponent 3.2) than "
+    "the shipping face.",
+    single("M-lockup", "M-carried", "L-lockup", tag="L"),
+    "One weight, one line, one idea: the A is the antinode. Reads as a wordmark first and a "
+    "diagram second, which is the right order for a name, and sits beside other type without "
+    "arguing with it.",
+    "There is no heavy element to carry it small. Below about 160&nbsp;px wide the &times; goes "
+    "first and the lobe soon after; use the icon cut there, and the one-ink cut wherever rust "
+    "cannot be guaranteed.")
+
+
 plate_k = plate("K", "Two antinodes, at working weight",
     "C's reading — one phase solid, the opposite ghosted, the antinode marked — cut down to a "
     "single wavelength and drawn at the weight of the logo already in use. One crest, one trough, "
@@ -132,6 +149,10 @@ plates = [
 ]
 
 plates = [group("Where it landed",
+                "The lobe in the A's slot, the name running out of it, one pen for both — K's "
+                "family at the bench's numbers."),
+          plate_m,
+          group("The working-weight version",
                 "Heavy mark, quiet name, two colours — C's idea at the weight and flexibility "
                 "of the logo already in use."),
           plate_k,
